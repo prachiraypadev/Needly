@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@layer theme {
+  :root {
+    /* Brand Primary (Needly Green — calm, trustworthy, local) */
+    --color-primary-50: hsl(152, 60%, 97%);
+    --color-primary-100: hsl(152, 55%, 93%);
+    --color-primary-200: hsl(152, 50%, 85%);
+    --color-primary-300: hsl(152, 48%, 72%);
+    --color-primary-400: hsl(152, 46%, 56%);
+    --color-primary-500: hsl(152, 50%, 40%);
+    --color-primary-600: hsl(152, 52%, 33%);
+    --color-primary-700: hsl(152, 54%, 26%);
+    --color-primary-800: hsl(152, 56%, 20%);
+    --color-primary-900: hsl(152, 58%, 14%);
+
+    /* Warm Neutrals (HSL 30 base — friendly, approachable) */
+    --color-neutral-0: hsl(0, 0%, 100%);
+    --color-neutral-50: hsl(30, 10%, 98%);
+    --color-neutral-100: hsl(30, 8%, 95%);
+    --color-neutral-200: hsl(30, 6%, 90%);
+    --color-neutral-300: hsl(30, 5%, 80%);
+    --color-neutral-400: hsl(30, 4%, 64%);
+    --color-neutral-500: hsl(30, 4%, 46%);
+    --color-neutral-600: hsl(30, 5%, 34%);
+    --color-neutral-700: hsl(30, 6%, 24%);
+    --color-neutral-800: hsl(30, 7%, 16%);
+    --color-neutral-900: hsl(30, 8%, 10%);
+    --color-neutral-950: hsl(30, 9%, 6%);
+
+    /* Semantic Tokens */
+    --color-success: hsl(142, 72%, 36%);
+    --color-success-light: hsl(142, 76%, 94%);
+    --color-warning: hsl(38, 92%, 44%);
+    --color-warning-light: hsl(48, 96%, 94%);
+    --color-error: hsl(0, 72%, 51%);
+    --color-error-light: hsl(0, 86%, 97%);
+    --color-info: hsl(210, 92%, 45%);
+    --color-info-light: hsl(210, 100%, 96%);
+
+    /* Need Type Specific Colors */
+    --color-need-borrow: hsl(210, 72%, 48%);
+    --color-need-borrow-bg: hsl(210, 85%, 95%);
+    --color-need-rent: hsl(270, 60%, 50%);
+    --color-need-rent-bg: hsl(270, 75%, 96%);
+    --color-need-buy: hsl(38, 88%, 44%);
+    --color-need-buy-bg: hsl(45, 95%, 94%);
+    --color-need-service: hsl(152, 50%, 40%);
+    --color-need-service-bg: hsl(152, 60%, 95%);
+
+    /* Shadcn UI Variables mapping */
+    --background: var(--color-neutral-0);
+    --foreground: var(--color-neutral-900);
+    --card: var(--color-neutral-0);
+    --card-foreground: var(--color-neutral-900);
+    --popover: var(--color-neutral-0);
+    --popover-foreground: var(--color-neutral-900);
+    --primary: var(--color-primary-500);
+    --primary-foreground: var(--color-neutral-0);
+    --secondary: var(--color-neutral-100);
+    --secondary-foreground: var(--color-neutral-800);
+    --muted: var(--color-neutral-100);
+    --muted-foreground: var(--color-neutral-500);
+    --accent: var(--color-primary-50);
+    --accent-foreground: var(--color-primary-700);
+    --destructive: var(--color-error);
+    --destructive-foreground: var(--color-neutral-0);
+    --border: var(--color-neutral-200);
+    --input: var(--color-neutral-300);
+    --ring: var(--color-primary-500);
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom Utilities for Needly Brand */
+@layer utilities {
+  .bg-surface {
+    background-color: var(--color-neutral-50);
+  }
+  .text-brand-muted {
+    color: var(--color-neutral-600);
+  }
+  .border-subtle {
+    border-color: var(--color-neutral-200);
+  }
+  .focus-ring {
+    outline: none;
+  }
+  .focus-ring:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-neutral-0), 0 0 0 4px var(--color-primary-500);
+  }
+}
