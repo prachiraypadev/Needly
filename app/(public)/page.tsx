@@ -44,21 +44,26 @@ export default function LandingPage() {
                 Ask your community for what you need. Borrow a ladder, rent a projector, buy pre-loved items, or find trusted local help from people you already live with.
               </p>
 
-              {/* Primary Call to Actions */}
+                            {/* Primary Call to Actions */}
               <div className="mt-8 flex flex-col gap-3.5 sm:flex-row sm:items-center">
-                <Link href="/join-community">
-                  <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base">
+                {/* 🌟 BUTTON 1: Instant Signup Door */}
+                <Link href="/signup">
+                  <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base shadow-sm shadow-[var(--color-primary-500)]/25">
                     <Sparkles className="h-5 w-5" />
-                    Join your community
+                    Join Jod Community
                   </Button>
                 </Link>
-                <Link href="#how-it-works">
+
+                                {/* 🌟 100% Working Smooth Scroll (Bina kisi error ke) */}
+                <a href="#how-it-works">
                   <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto text-base">
                     See how it works
                     <ArrowRight className="h-4 w-4" />
                   </Button>
-                </Link>
+                </a>
+
               </div>
+
 
               {/* Social Proof Checklist */}
               <div className="mt-10 grid grid-cols-2 gap-4 border-t border-[var(--color-neutral-200)] pt-6 sm:grid-cols-3">
@@ -173,7 +178,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto">
             <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary-600)]">
-              The Needly Workflow
+              The Jod Workflow
             </span>
             <h2 className="mt-2 text-3xl font-extrabold text-[var(--color-neutral-900)] sm:text-4xl">
               From unstructured request to fulfilled need

@@ -1,9 +1,9 @@
 "use client";
-
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signIn } from "@/lib/actions/auth";
 import type { AuthFormState } from "@/lib/validations/auth";
-import { AlertCircle, Loader2, Mail, Lock } from "lucide-react";
+import { AlertCircle, Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 
 export function LoginForm() {
@@ -11,6 +11,9 @@ export function LoginForm() {
     signIn,
     undefined
   );
+  // 🌟 NAYA: Password dikhana hai ya chupana hai
+  const [showPassword, setShowPassword] = useState(false);
+
 
   return (
     <form action={action} noValidate>
@@ -59,7 +62,7 @@ export function LoginForm() {
         )}
       </div>
 
-      {/* Password field */}
+            {/* Password field */}
       <div className="mb-6">
         <label
           htmlFor="login-password"
@@ -72,15 +75,29 @@ export function LoginForm() {
           <input
             id="login-password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required
             aria-describedby={state?.errors?.password ? "login-password-error" : undefined}
             aria-invalid={!!state?.errors?.password}
             placeholder="••••••••"
-            className="w-full rounded-lg border border-[var(--color-neutral-300)] bg-white py-2.5 pl-10 pr-3.5 text-sm text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/20 disabled:opacity-60 aria-invalid:border-[hsl(0,70%,55%)]"
+            className="w-full rounded-lg border border-[var(--color-neutral-300)] bg-white py-2.5 pl-10 pr-10 text-sm text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/20 disabled:opacity-60 aria-invalid:border-[hsl(0,70%,55%)]"
           />
+          {/* 👁️ NAYA EYE TOGGLE BUTTON */}
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-700)] focus:outline-none"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
         </div>
+
         {state?.errors?.password && (
           <p
             id="login-password-error"
@@ -107,7 +124,7 @@ export function LoginForm() {
             Signing in…
           </>
         ) : (
-          "Sign in"
+          "Log In"
         )}
       </Button>
     </form>

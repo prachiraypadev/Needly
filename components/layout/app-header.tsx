@@ -19,7 +19,7 @@ export async function AppHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link
-          href="/profile"
+          href="/needs"
           className="flex items-center gap-2 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)]"
         >
           <span className="text-lg font-extrabold tracking-tight text-[var(--color-neutral-900)]">
@@ -48,13 +48,24 @@ export async function AppHeader() {
 
         {/* User controls */}
         <div className="flex items-center gap-3">
+            {/* 🌟 NAYA BUTTON: Quick Post Need */}
+          <Link
+            href="/needs/create"
+            className="flex items-center gap-1.5 rounded-lg bg-[var(--color-primary-600)] px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[var(--color-primary-700)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)]"
+          >
+            <span>+</span> Post Need
+          </Link>
           {user && (
-            <div className="flex items-center gap-2.5">
+            <Link
+       href="/profile"
+       className="flex items-center gap-2.5 rounded-lg p-1 transition-colors hover:bg-[var(--color-neutral-100)]"
+       title="View Profile"
+     >
               <Avatar name={user.email ?? "User"} size="sm" />
               <span className="hidden text-sm font-medium text-[var(--color-neutral-700)] sm:block">
                 {user.email}
               </span>
-            </div>
+            </Link>
           )}
 
           {/* Logout via server action form — works without JS */}
