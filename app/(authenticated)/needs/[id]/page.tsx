@@ -34,7 +34,7 @@ export async function generateMetadata({
 }: NeedDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: `Need Details — Needly`,
+    title: `Need Details — Jod`,
     description: `View details of community request ${id}.`,
   };
 }

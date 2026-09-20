@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Plus, Package, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "My Offerings — Needly",
+  title: "My Offerings — Jod",
   description: "Manage your shared items and services across your communities.",
 };
 

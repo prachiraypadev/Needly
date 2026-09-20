@@ -14,7 +14,7 @@ export function Footer() {
                 <HandHelping className="h-4 w-4" />
               </div>
               <span className="text-xl font-bold tracking-tight text-[var(--color-neutral-900)]">
-                Needly
+                Jod
               </span>
             </Link>
             <p className="max-w-sm text-sm text-[var(--color-neutral-500)] leading-relaxed">
@@ -33,24 +33,36 @@ export function Footer() {
             </h4>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
-                <span className="text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]">
+                <Link
+                  href="/needs?type=borrow"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
                   Borrow Items
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]">
+                <Link
+                  href="/needs?type=rent"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
                   Rent Equipment
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]">
-                  Buy & Sell
-                </span>
+                <Link
+                  href="/needs?type=buy"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
+                  Buy &amp; Sell
+                </Link>
               </li>
               <li>
-                <span className="text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]">
+                <Link
+                  href="/needs?type=service"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
                   Local Services
-                </span>
+                </Link>
               </li>
             </ul>
           </div>
@@ -62,16 +74,36 @@ export function Footer() {
             </h4>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
-                <span className="text-[var(--color-neutral-600)]">Apartment Societies</span>
+                <Link
+                  href="/communities"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
+                  Apartment Societies
+                </Link>
               </li>
               <li>
-                <span className="text-[var(--color-neutral-600)]">Gated Layouts</span>
+                <Link
+                  href="/communities"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
+                  Gated Layouts
+                </Link>
               </li>
               <li>
-                <span className="text-[var(--color-neutral-600)]">Colleges & Hostels</span>
+                <Link
+                  href="/communities"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
+                  Colleges &amp; Hostels
+                </Link>
               </li>
               <li>
-                <span className="text-[var(--color-neutral-600)]">Office Campuses</span>
+                <Link
+                  href="/communities"
+                  className="text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-primary-600)]"
+                >
+                  Office Campuses
+                </Link>
               </li>
             </ul>
           </div>
@@ -92,7 +124,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between border-t border-[var(--color-neutral-200)] pt-8 sm:flex-row">
           <p className="text-xs text-[var(--color-neutral-400)]">
-            &copy; {new Date().getFullYear()} Needly. Built for trusted communities.
+            &copy; {new Date().getFullYear()} Jod. Built for trusted communities.
           </p>
           <div className="mt-4 flex items-center gap-1 text-xs text-[var(--color-neutral-500)] sm:mt-0">
             <span>Crafted with</span>

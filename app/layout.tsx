@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "local services",
     "apartment society",
   ],
-  authors: [{ name: "Needly Team" }],
+  authors: [{ name: "Jod Team" }],
 };
 
 export const viewport: Viewport = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useState, useActionState, useEffect } from "react";
 import { createNeed } from "@/lib/actions/needs";
 import {
   NEED_TYPES,
@@ -22,6 +22,7 @@ import {
   Layers,
   Building2,
   HelpCircle,
+  Zap,
 } from "lucide-react";
 
 interface CreateNeedWizardProps {
@@ -73,6 +74,31 @@ export function CreateNeedWizard({
   const canAdvanceStep2 = !!needType;
   const canAdvanceStep3 = true; // optional details
 
+  // Global Enter Key Listener across all steps
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        const target = e.target as HTMLElement | null;
+        // Don't intercept Enter inside textareas or during server action submission
+        if (target?.tagName === "TEXTAREA" || pending) return;
+
+        if (step === 1 && canAdvanceStep1) {
+          e.preventDefault();
+          setStep(2);
+        } else if (step === 2 && canAdvanceStep2) {
+          e.preventDefault();
+          setStep(3);
+        } else if (step === 3 && canAdvanceStep3) {
+          e.preventDefault();
+          setStep(4);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [step, canAdvanceStep1, canAdvanceStep2, canAdvanceStep3, pending]);
+
   return (
     <div className="space-y-6">
       {/* Progress Bar */}
@@ -107,7 +133,13 @@ export function CreateNeedWizard({
 
       {/* STEP 1: What do you need? */}
       {step === 1 && (
-        <div className="space-y-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (canAdvanceStep1) setStep(2);
+          }}
+          className="space-y-5"
+        >
           <div>
             <label
               htmlFor="wizard-community"
@@ -156,7 +188,7 @@ export function CreateNeedWizard({
               />
             </div>
             <p className="mt-1.5 text-xs text-[var(--color-neutral-500)]">
-              Start with a clear, concise sentence describing the item or help you need.
+              Start with a clear, concise sentence describing the item or help you need. (Press Enter to continue)
             </p>
             {state?.errors?.title && (
               <p className="mt-1 text-xs text-[hsl(0,65%,45%)]">
@@ -167,22 +199,27 @@ export function CreateNeedWizard({
 
           <div className="flex justify-end pt-4">
             <Button
-              type="button"
+              type="submit"
               variant="primary"
               disabled={!canAdvanceStep1}
-              onClick={() => setStep(2)}
               className="flex items-center gap-1.5"
             >
               Continue
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </form>
       )}
 
       {/* STEP 2: How do you want it? */}
       {step === 2 && (
-        <div className="space-y-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (canAdvanceStep2) setStep(3);
+          }}
+          className="space-y-5"
+        >
           <p className="text-sm text-[var(--color-neutral-600)]">
             Choose how you would prefer community members to help fulfill this need:
           </p>
@@ -232,23 +269,48 @@ export function CreateNeedWizard({
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            <Button
-              type="button"
-              variant="primary"
-              disabled={!canAdvanceStep2}
-              onClick={() => setStep(3)}
-              className="flex items-center gap-1.5"
-            >
-              Continue
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setStep(4)}
+                className="text-xs text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)] hidden sm:inline-flex"
+              >
+                Skip optional details ➔
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={!canAdvanceStep2}
+                className="flex items-center gap-1.5"
+              >
+                Continue
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
+        </form>
       )}
 
       {/* STEP 3: Additional Details */}
       {step === 3 && (
-        <div className="space-y-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (canAdvanceStep3) setStep(4);
+          }}
+          className="space-y-5"
+        >
+          <div className="rounded-lg bg-[var(--color-primary-50)]/50 border border-[var(--color-primary-200)]/60 px-3.5 py-2.5 flex items-center justify-between text-xs text-[var(--color-primary-800)]">
+            <span>All fields below are optional. Want to post fast?</span>
+            <button
+              type="button"
+              onClick={() => setStep(4)}
+              className="font-bold underline text-xs text-[var(--color-primary-700)] hover:text-[var(--color-primary-800)] cursor-pointer"
+            >
+              Skip to Review ➔
+            </button>
+          </div>
           {/* Category */}
           <div>
             <label
@@ -415,17 +477,16 @@ export function CreateNeedWizard({
               Back
             </Button>
             <Button
-              type="button"
+              type="submit"
               variant="primary"
               disabled={!canAdvanceStep3}
-              onClick={() => setStep(4)}
               className="flex items-center gap-1.5"
             >
               Review Need
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </form>
       )}
 
       {/* STEP 4: Review & Publish Form */}

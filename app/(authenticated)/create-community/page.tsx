@@ -4,8 +4,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Create a Community — Needly",
-  description: "Create a new verified community for your apartment, college, or workplace on Needly.",
+  title: "Create a Community — Jod",
+  description: "Create a new verified community for your apartment, college, or workplace on Jod.",
 };
 
 export default function CreateCommunityPage() {

@@ -8,7 +8,8 @@ import { CommunityHeader } from "@/components/community/community-header";
 import { InviteShareCard } from "@/components/community/invite-share-card";
 import { MemberList } from "@/components/community/member-list";
 import Link from "next/link";
-import { ArrowLeft, ShoppingBag, PlusCircle, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ShoppingBag, PlusCircle, AlertTriangle, Package, ArrowRight } from "lucide-react";
+import { DeleteCommunityButton } from "@/components/community/delete-community-button";
 import { Button } from "@/components/ui/button";
 
 interface CommunityDetailPageProps {
@@ -22,7 +23,7 @@ export async function generateMetadata({
 }: CommunityDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: "Community Dashboard — Needly",
+    title: "Community Dashboard — Jod",
     description: `Manage community ${id} and access member listings and requests.`,
   };
 }
@@ -84,51 +85,79 @@ export default async function CommunityDetailPage({
         memberCount={memberCount}
       />
 
-      {/* Quick Action Placeholders for future phases */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-xs flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-primary-50)] text-[var(--color-primary-600)]">
+      {/* Quick Community Actions */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        {/* Action 1: Needs Feed */}
+        <Link
+          href={`/needs?community=${community.id}`}
+          className="group rounded-xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-xs transition-all hover:border-[var(--color-primary-400)] hover:shadow-md flex flex-col justify-between"
+        >
+          <div className="flex items-start gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-primary-50)] text-[var(--color-primary-600)] group-hover:bg-[var(--color-primary-100)] transition-colors">
               <ShoppingBag className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[var(--color-neutral-900)]">
-                Community Marketplace
-              </h2>
-              <p className="text-xs text-[var(--color-neutral-500)]">
-                Borrow, rent, or buy items within {community.name}
+              <h3 className="text-sm font-bold text-[var(--color-neutral-900)] group-hover:text-[var(--color-primary-700)] transition-colors">
+                Needs Feed
+              </h3>
+              <p className="mt-1 text-xs text-[var(--color-neutral-500)] leading-relaxed">
+                See what members in {community.name} are requesting right now.
               </p>
             </div>
           </div>
-          <span
-            aria-disabled="true"
-            className="text-xs font-medium text-[var(--color-neutral-400)] cursor-not-allowed"
-          >
-            Coming in Phase 5
-          </span>
-        </div>
+          <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-[var(--color-primary-600)] group-hover:translate-x-1 transition-transform">
+            <span>Explore Needs</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </div>
+        </Link>
 
-        <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-xs flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-primary-50)] text-[var(--color-primary-600)]">
+        {/* Action 2: Post a Need */}
+        <Link
+          href={`/needs/create?community=${community.id}`}
+          className="group rounded-xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-xs transition-all hover:border-[var(--color-primary-400)] hover:shadow-md flex flex-col justify-between"
+        >
+          <div className="flex items-start gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 transition-colors">
               <PlusCircle className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[var(--color-neutral-900)]">
-                Post a Need
-              </h2>
-              <p className="text-xs text-[var(--color-neutral-500)]">
-                Ask neighbors for tools, emergency help, or items
+              <h3 className="text-sm font-bold text-[var(--color-neutral-900)] group-hover:text-emerald-700 transition-colors">
+                Ask / Post a Need
+              </h3>
+              <p className="mt-1 text-xs text-[var(--color-neutral-500)] leading-relaxed">
+                Need a drill, ladder, projector, or help? Ask your group.
               </p>
             </div>
           </div>
-          <span
-            aria-disabled="true"
-            className="text-xs font-medium text-[var(--color-neutral-400)] cursor-not-allowed"
-          >
-            Coming in Phase 5
-          </span>
-        </div>
+          <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-emerald-600 group-hover:translate-x-1 transition-transform">
+            <span>+ Post a Request</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </div>
+        </Link>
+
+        {/* Action 3: Offer Item / Service */}
+        <Link
+          href={`/listings/create?community=${community.id}`}
+          className="group rounded-xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-xs transition-all hover:border-[var(--color-primary-400)] hover:shadow-md flex flex-col justify-between"
+        >
+          <div className="flex items-start gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
+              <Package className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-[var(--color-neutral-900)] group-hover:text-blue-700 transition-colors">
+                Offer Item / Service
+              </h3>
+              <p className="mt-1 text-xs text-[var(--color-neutral-500)] leading-relaxed">
+                Lend extra tools, share appliances, or offer skills.
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">
+            <span>+ Share Something</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </div>
+        </Link>
       </div>
 
       {/* Invite Sharing Card (For active members) */}
@@ -139,6 +168,27 @@ export default async function CommunityDetailPage({
 
       {/* Member Directory */}
       <MemberList members={members} />
+
+      {/* Admin / Danger Zone */}
+      {(userRole === "owner" || userRole === "admin") && (
+        <div className="rounded-xl border border-red-200 bg-red-50/30 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-bold text-red-900">
+              Community Administration
+            </h3>
+            <p className="mt-1 text-xs text-red-600 max-w-md">
+              Need to remove this community? Archiving will hide it from listings and remove all member associations.
+            </p>
+          </div>
+
+          <DeleteCommunityButton
+            communityId={community.id}
+            communityName={community.name}
+            variant="full"
+            redirectAfter={true}
+          />
+        </div>
+      )}
     </div>
   );
 }

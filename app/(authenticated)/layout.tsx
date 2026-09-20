@@ -1,5 +1,6 @@
 import { verifySession } from "@/lib/auth/dal";
 import { AppHeader } from "@/components/layout/app-header";
+import { MobileNav } from "@/components/layout/mobile-nav";
 
 /**
  * Authenticated Route Group Layout
@@ -20,7 +21,8 @@ export default async function AuthenticatedLayout({
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-neutral-50)]">
       <AppHeader />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-20 sm:pb-0">{children}</main>
+      <MobileNav />
     </div>
   );
 }

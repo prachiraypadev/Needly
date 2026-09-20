@@ -3,8 +3,8 @@ import { SignupForm } from "@/components/auth/signup-form";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Create Account — Needly",
-  description: "Join Needly and connect with your community to borrow, rent, buy, and find trusted local help.",
+  title: "Create Account — Jod",
+  description: "Join Jod and connect with your community to borrow, rent, buy, and find trusted local help.",
 };
 
 export default function SignupPage() {

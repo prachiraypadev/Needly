@@ -34,7 +34,7 @@ export async function generateMetadata({
 }: ListingDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: "Offering Details — Needly",
+    title: "Offering Details — Jod",
     description: `View details of community listing ${id}.`,
   };
 }

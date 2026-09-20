@@ -8,7 +8,7 @@ import { ArrowLeft, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Post a Need — Needly",
+  title: "Post a Need — Jod",
   description: "Ask your neighbors to borrow, rent, buy, or help with tasks in your community.",
 };
 
@@ -39,7 +39,7 @@ export default async function CreateNeedPage({
           Join a Community First
         </h1>
         <p className="mt-2 text-sm text-[var(--color-neutral-600)] max-w-md mx-auto">
-          Needly is community-first. You must be a member of a local apartment, hostel, or neighborhood community before posting a need.
+          Jod is community-first. You must be a member of a local apartment, hostel, or neighborhood community before posting a need.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Button asChild variant="outline">

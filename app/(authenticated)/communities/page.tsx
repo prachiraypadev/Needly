@@ -20,9 +20,11 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "My Communities — Needly",
-  description: "View and manage the local communities you belong to on Needly.",
+  title: "My Communities — Jod",
+  description: "View and manage the local communities you belong to on Jod.",
 };
+
+import { DeleteCommunityButton } from "@/components/community/delete-community-button";
 
 export default async function CommunitiesPage() {
   const { userId } = await verifySession();
@@ -37,7 +39,7 @@ export default async function CommunitiesPage() {
             My Communities
           </h1>
           <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
-            Needly is community-first. All your local borrowing, lending, and requests happen within these groups.
+            Jod is community-first. All your local borrowing, lending, and requests happen within these groups.
           </p>
         </div>
 
@@ -68,7 +70,7 @@ export default async function CommunitiesPage() {
             You haven&apos;t joined any communities yet
           </h2>
           <p className="mx-auto mt-1 max-w-sm text-sm text-[var(--color-neutral-500)]">
-            Needly connects you with people in your apartment, college campus, or neighborhood. Join an existing community with an invite code or create a new one.
+            Jod connects you with people in your apartment, college campus, or neighborhood. Join an existing community with an invite code or create a new one.
           </p>
           <div className="mt-6 flex justify-center gap-3">
             <Button asChild variant="outline">
@@ -89,43 +91,54 @@ export default async function CommunitiesPage() {
             const isAdmin = comm.role === "admin";
 
             return (
-              <Link
+              <div
                 key={comm.id}
-                href={`/communities/${comm.id}`}
-                className="group flex flex-col justify-between rounded-xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-xs transition-all hover:border-[var(--color-primary-500)]/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)]"
+                className="group flex flex-col justify-between rounded-xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-xs transition-all hover:border-[var(--color-primary-400)] hover:shadow-md"
               >
                 <div>
-                  {/* Top badges */}
+                  {/* Top badges + Delete option */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <Badge variant="default" className="text-[11px]">
                       <Building2 className="mr-1 h-3 w-3" />
                       {typeLabel}
                     </Badge>
 
-                    {isOwner ? (
-                      <Badge variant="primary" className="text-[11px]">
-                        <Crown className="mr-1 h-3 w-3" />
-                        Owner
-                      </Badge>
-                    ) : isAdmin ? (
-                      <Badge variant="primary" className="text-[11px]">
-                        <Shield className="mr-1 h-3 w-3" />
-                        Admin
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-[11px]">
-                        Member
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-1.5">
+                      {isOwner ? (
+                        <Badge variant="primary" className="text-[11px]">
+                          <Crown className="mr-1 h-3 w-3" />
+                          Owner
+                        </Badge>
+                      ) : isAdmin ? (
+                        <Badge variant="primary" className="text-[11px]">
+                          <Shield className="mr-1 h-3 w-3" />
+                          Admin
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[11px]">
+                          Member
+                        </Badge>
+                      )}
+
+                      {(isOwner || isAdmin) && (
+                        <DeleteCommunityButton
+                          communityId={comm.id}
+                          communityName={comm.name}
+                          variant="icon"
+                        />
+                      )}
+                    </div>
                   </div>
 
                   {/* Title & Description */}
-                  <h2 className="text-base font-bold text-[var(--color-neutral-900)] group-hover:text-[var(--color-primary-700)] transition-colors">
-                    {comm.name}
-                  </h2>
-                  <p className="mt-1 line-clamp-2 text-xs text-[var(--color-neutral-500)] leading-relaxed">
-                    {comm.description || "No description provided."}
-                  </p>
+                  <Link href={`/communities/${comm.id}`} className="block group">
+                    <h2 className="text-base font-bold text-[var(--color-neutral-900)] group-hover:text-[var(--color-primary-700)] transition-colors">
+                      {comm.name}
+                    </h2>
+                    <p className="mt-1 line-clamp-2 text-xs text-[var(--color-neutral-500)] leading-relaxed">
+                      {comm.description || "No description provided."}
+                    </p>
+                  </Link>
                 </div>
 
                 {/* Footer */}
@@ -144,11 +157,14 @@ export default async function CommunitiesPage() {
                     )}
                   </div>
 
-                  <span className="flex items-center gap-1 font-semibold text-[var(--color-primary-600)] group-hover:translate-x-0.5 transition-transform">
+                  <Link
+                    href={`/communities/${comm.id}`}
+                    className="flex items-center gap-1 font-semibold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] group-hover:translate-x-0.5 transition-transform"
+                  >
                     Enter <ArrowRight className="h-3 w-3" />
-                  </span>
+                  </Link>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

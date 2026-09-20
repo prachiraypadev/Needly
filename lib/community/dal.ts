@@ -158,7 +158,7 @@ export const getCommunityMembers = cache(
         user_id,
         role,
         joined_at,
-        profiles (
+        profiles:user_id (
           display_name,
           avatar_url
         )

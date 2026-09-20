@@ -7,6 +7,7 @@ import {
   getUserNeeds,
 } from "@/lib/needs/dal";
 import { NeedCard } from "@/components/needs/need-card";
+import { CommunitySwitcher } from "@/components/community/community-switcher";
 import { Button } from "@/components/ui/button";
 import {
   NEED_TYPES,
@@ -23,7 +24,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Needs Feed — Needly",
+  title: "Needs Feed — Jod",
   description: "Browse needs, requests, and borrow requests in your local community.",
 };
 
@@ -56,7 +57,7 @@ export default async function NeedsFeedPage({
           Join a Community to See Needs
         </h1>
         <p className="mt-2 text-sm text-[var(--color-neutral-600)] max-w-md mx-auto">
-          Needly connects you to verified neighbors in your apartment, hostel, or neighborhood. Join an existing community or start your own to see what neighbors need.
+          Jod connects you to verified neighbors in your apartment, hostel, or neighborhood. Join an existing community or start your own to see what neighbors need.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Button asChild variant="outline">
@@ -132,22 +133,11 @@ export default async function NeedsFeedPage({
 
             {/* Dropdown to switch active community */}
             <div className="flex items-center gap-2">
-              <form action="/needs" method="GET" className="inline">
-                {typeParam && <input type="hidden" name="type" value={typeParam} />}
-                <select
-                  name="community"
-                  defaultValue={activeCommunity?.id}
-                  onChange={(e) => e.target.form?.submit()}
-                  aria-label="Select active community"
-                  className="rounded-md border border-[var(--color-neutral-300)] bg-white py-1 px-2.5 text-sm font-semibold text-[var(--color-neutral-900)] focus:border-[var(--color-primary-500)] focus:outline-none"
-                >
-                  {userCommunities.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </form>
+              <CommunitySwitcher
+                communities={userCommunities}
+                activeCommunityId={activeCommunity?.id}
+                basePath="/needs"
+              />
 
               {activeCommunity && (
                 <Link
@@ -230,24 +220,47 @@ export default async function NeedsFeedPage({
 
       {/* Needs Grid */}
       {needs.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[var(--color-neutral-300)] bg-white p-12 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-neutral-100)] text-[var(--color-neutral-400)] mb-4">
-            <ShoppingBag className="h-6 w-6" />
+        <div className="rounded-2xl border border-[var(--color-neutral-200)] bg-gradient-to-b from-white to-[var(--color-neutral-50)] p-8 sm:p-12 text-center shadow-xs">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-primary-50)] text-[var(--color-primary-600)] ring-8 ring-[var(--color-primary-50)]/50 mb-5">
+            <ShoppingBag className="h-7 w-7" />
           </div>
-          <h2 className="text-base font-semibold text-[var(--color-neutral-900)]">
+          <h2 className="text-lg font-bold text-[var(--color-neutral-900)]">
             {isMyNeedsView
               ? "You haven't posted any needs yet"
-              : `No ${selectedType ? selectedType : ""} needs in ${
+              : `No active needs in ${
                   activeCommunity?.name ?? "this community"
-                } right now`}
+                } yet`}
           </h2>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-[var(--color-neutral-500)]">
+          <p className="mx-auto mt-1.5 max-w-md text-sm text-[var(--color-neutral-600)] leading-relaxed">
             {isMyNeedsView
-              ? "When you need a tool, appliance, or local service, post a need and neighbors can respond."
-              : "Be the first neighbor to post a request or borrow an item!"}
+              ? "When you need a tool, appliance, or local service, post a request and neighbors will get notified."
+              : "Kickstart the community! Ask to borrow an item, find local recommendations, or hire trusted help."}
           </p>
-          <div className="mt-6 flex justify-center">
-            <Button asChild variant="primary">
+
+          {/* Quick Idea Pills (Psychological prompts) */}
+          <div className="mt-6 flex flex-wrap justify-center gap-2 max-w-lg mx-auto">
+            {[
+              "🔨 Cordless drill for home fixes",
+              "🪜 6ft Step ladder for lights",
+              "📽️ Home projector for weekend",
+              "⚡ Trusted local electrician",
+            ].map((idea) => (
+              <Link
+                key={idea}
+                href={
+                  activeCommunity
+                    ? `/needs/create?community=${activeCommunity.id}`
+                    : "/needs/create"
+                }
+                className="rounded-full border border-[var(--color-neutral-200)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--color-neutral-700)] transition-all hover:border-[var(--color-primary-300)] hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-800)]"
+              >
+                {idea}
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-7 flex justify-center">
+            <Button asChild variant="primary" size="lg" className="gap-2 shadow-sm font-semibold">
               <Link
                 href={
                   activeCommunity
@@ -255,7 +268,8 @@ export default async function NeedsFeedPage({
                     : "/needs/create"
                 }
               >
-                Post the First Need
+                <Plus className="h-4 w-4" />
+                Post a Need Now
               </Link>
             </Button>
           </div>
