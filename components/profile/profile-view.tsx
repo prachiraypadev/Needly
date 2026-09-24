@@ -13,6 +13,7 @@ import {
   Plus,
   KeyRound,
   Shield,
+  ArrowRight,
 } from "lucide-react";
 import type { Database } from "@/lib/types/database.types";
 import type { UserCommunityItem } from "@/lib/community/dal";
@@ -141,19 +142,19 @@ export function ProfileView({ profile, communities, stats }: ProfileViewProps) {
         </Link>
 
         <Link
-          href="/needs"
+          href="/needs?view=my-needs"
           className="group rounded-xl border border-[var(--color-neutral-200)] bg-white p-4 transition-all hover:border-[var(--color-primary-300)] hover:shadow-xs"
         >
           <div className="flex items-center justify-between text-[var(--color-neutral-500)] mb-1">
             <span className="text-xs font-medium group-hover:text-[var(--color-primary-700)]">
-              Needs Posted
+              My Needs
             </span>
             <ShoppingBag className="h-4 w-4 text-[var(--color-neutral-400)] group-hover:text-[var(--color-primary-600)]" />
           </div>
           <div className="text-2xl font-black text-[var(--color-neutral-900)]">
             {stats.needsCount}
           </div>
-          <span className="text-[11px] text-[var(--color-neutral-400)]">Requests created</span>
+          <span className="text-[11px] text-[var(--color-neutral-400)]">Requests created by you</span>
         </Link>
 
         <Link
@@ -162,14 +163,14 @@ export function ProfileView({ profile, communities, stats }: ProfileViewProps) {
         >
           <div className="flex items-center justify-between text-[var(--color-neutral-500)] mb-1">
             <span className="text-xs font-medium group-hover:text-[var(--color-primary-700)]">
-              Offerings
+              Shared Items
             </span>
             <Package className="h-4 w-4 text-[var(--color-neutral-400)] group-hover:text-[var(--color-primary-600)]" />
           </div>
           <div className="text-2xl font-black text-[var(--color-neutral-900)]">
             {stats.listingsCount}
           </div>
-          <span className="text-[11px] text-[var(--color-neutral-400)]">Items & services</span>
+          <span className="text-[11px] text-[var(--color-neutral-400)]">Items & services shared</span>
         </Link>
       </div>
 
@@ -242,15 +243,10 @@ export function ProfileView({ profile, communities, stats }: ProfileViewProps) {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                  <Button asChild variant="outline" size="sm" className="text-xs">
-                    <Link href={`/needs?community=${comm.id}`}>
-                      View Needs
-                    </Link>
-                  </Button>
-                  <Button asChild variant="ghost" size="sm" className="text-xs">
-                    <Link href={`/communities/${comm.id}`} className="flex items-center gap-1">
-                      <span>Dashboard</span>
-                      <ExternalLink className="h-3 w-3" />
+                  <Button asChild variant="outline" size="sm" className="text-xs font-semibold">
+                    <Link href={`/communities/${comm.id}`} className="flex items-center gap-1.5">
+                      <span>Enter Community</span>
+                      <ArrowRight className="h-3 w-3" />
                     </Link>
                   </Button>
                   {(comm.role === "owner" || comm.role === "admin") && (

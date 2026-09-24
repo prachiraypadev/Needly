@@ -83,6 +83,41 @@ function classifyPath(pathname: string): "protected" | "auth" | "public" {
 // ---------------------------------------------------------------------------
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const routeType = classifyPath(pathname);
+
+  // 1. Fast path for public routes: Never block with network calls
+  if (routeType === "public") {
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    });
+  }
+
+  // 2. Fast check: Check if any Supabase session cookies exist locally in the browser request
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some(
+    (c) => c.name.includes("auth-token") || c.name.startsWith("sb-")
+  );
+
+  // If visiting protected route with NO cookie, redirect to /login immediately in 0ms
+  if (routeType === "protected" && !hasAuthCookie) {
+    const loginUrl = new URL("/login", request.nextUrl.origin);
+    loginUrl.searchParams.set("next", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // If visiting /login or /signup with NO cookie, show form immediately in 0ms
+  if (routeType === "auth" && !hasAuthCookie) {
+    return NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    });
+  }
+
+  // 3. For users with auth cookies, configure Supabase client to verify session and refresh token
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -92,9 +127,6 @@ export async function proxy(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // If Supabase is not yet configured (e.g. no .env.local), pass through
-  // without enforcing redirects. This prevents the app from breaking during
-  // local development before a Supabase project is connected.
   if (!supabaseUrl || !supabaseAnonKey) {
     return response;
   }
@@ -116,21 +148,15 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  // IMPORTANT: Use getUser() — not getSession() — to validate the JWT
-  // server-side. getSession() reads only the cookie without verification.
-  // Supabase security advisory: always use getUser() in middleware/proxy.
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-  const routeType = classifyPath(pathname);
   const isAuthenticated = !!user;
 
   // Unauthenticated user attempting to access a protected route
   if (routeType === "protected" && !isAuthenticated) {
     const loginUrl = new URL("/login", request.nextUrl.origin);
-    // Preserve the intended destination for post-login redirect
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }

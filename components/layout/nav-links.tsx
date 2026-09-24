@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, Package, Users } from "lucide-react";
+import { ShoppingBag, Package, Users } from "lucide-react";
 
 interface NavItem {
   href: string;
@@ -12,10 +12,9 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/profile", label: "My Profile", icon: LayoutDashboard },
-  { href: "/communities", label: "Communities", icon: Users },
   { href: "/needs", label: "Needs", icon: ShoppingBag },
-  { href: "/listings", label: "Offerings", icon: Package },
+  { href: "/listings", label: "Available Items", icon: Package },
+  { href: "/communities", label: "Communities", icon: Users },
 ];
 
 export function NavLinks() {
@@ -28,10 +27,7 @@ export function NavLinks() {
     >
       {NAV_ITEMS.map((item) => {
         const Icon = item.icon;
-        const isActive =
-          item.href === "/profile"
-            ? pathname === "/profile"
-            : pathname.startsWith(item.href);
+        const isActive = pathname.startsWith(item.href);
 
         return (
           <Link

@@ -26,6 +26,31 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      // Sync OAuth profile metadata (full_name, avatar_url) from Google
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const metaName =
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.user_metadata?.display_name;
+        const metaAvatar =
+          user.user_metadata?.avatar_url ||
+          user.user_metadata?.picture;
+
+        if (metaName || metaAvatar) {
+          await supabase
+            .from("profiles")
+            .update({
+              ...(metaName ? { display_name: metaName } : {}),
+              ...(metaAvatar ? { avatar_url: metaAvatar } : {}),
+            })
+            .eq("id", user.id);
+        }
+      }
+
       // Ensure next is a relative path (prevent open redirect)
       const safeNext = next.startsWith("/") ? next : "/profile";
       return NextResponse.redirect(new URL(safeNext, origin));

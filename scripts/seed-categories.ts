@@ -1,8 +1,22 @@
 import { createClient } from "@supabase/supabase-js";
-import dotenv from "dotenv";
+import fs from "fs";
 import path from "path";
 
-dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+// Read .env.local if not already in process.env
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  const envContent = fs.readFileSync(path.resolve(process.cwd(), ".env.local"), "utf-8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const idx = trimmed.indexOf("=");
+      if (idx !== -1) {
+        const key = trimmed.slice(0, idx).trim();
+        const val = trimmed.slice(idx + 1).trim().replace(/^["']|["']$/g, "");
+        process.env[key] = val;
+      }
+    }
+  }
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;

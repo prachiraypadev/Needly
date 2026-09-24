@@ -59,31 +59,14 @@ export default async function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Page header with quick navigation */}
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--color-neutral-900)]">
-            My Profile
-          </h1>
-          <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
-            Manage your personal information, communities, and account details.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <Button asChild variant="outline" size="sm" className="bg-white shadow-2xs">
-            <Link href="/communities" className="flex items-center gap-1.5">
-              <Building2 className="h-3.5 w-3.5 text-[var(--color-primary-600)]" />
-              <span>Communities ({communities.length})</span>
-            </Link>
-          </Button>
-          <Button asChild variant="primary" size="sm" className="shadow-2xs">
-            <Link href="/needs/create" className="flex items-center gap-1.5">
-              <Plus className="h-3.5 w-3.5" />
-              <span>Post Need</span>
-            </Link>
-          </Button>
-        </div>
+      {/* Page header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[var(--color-neutral-900)]">
+          My Profile
+        </h1>
+        <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
+          Manage your personal information, communities, and account details.
+        </p>
       </div>
 
       {/* Profile display with stats and communities */}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SignupForm } from "@/components/auth/signup-form";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -33,6 +34,21 @@ export default function SignupPage() {
           <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
             Create your account
           </p>
+        </div>
+
+        {/* Google Sign Up */}
+        <GoogleSignInButton text="Sign up with Google" />
+
+        {/* Divider */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-[var(--color-neutral-200)]" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-3 text-[var(--color-neutral-400)] font-medium">
+              Or continue with email
+            </span>
+          </div>
         </div>
 
         {/* Form */}

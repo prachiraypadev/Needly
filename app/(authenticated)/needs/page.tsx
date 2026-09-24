@@ -8,7 +8,6 @@ import {
 } from "@/lib/needs/dal";
 import { NeedCard } from "@/components/needs/need-card";
 import { CommunitySwitcher } from "@/components/community/community-switcher";
-import { Button } from "@/components/ui/button";
 import {
   NEED_TYPES,
   NEED_TYPE_CONFIG,
@@ -16,7 +15,6 @@ import {
 } from "@/lib/validations/need";
 import Link from "next/link";
 import {
-  Plus,
   Building2,
   ShoppingBag,
   User,
@@ -89,33 +87,52 @@ export default async function NeedsFeedPage({
     ? await getCommunityNeedsFeed(activeCommunity.id, userId, selectedType)
     : [];
 
+  const activeCategoryIdeas = selectedType
+    ? {
+        borrow: [
+          "🔨 Cordless drill for home fixes",
+          "🪜 6ft Step ladder for lights",
+          "🚲 Bicycle for the weekend",
+          "🔌 Extension cord & power strip",
+        ],
+        rent: [
+          "📽️ Home projector for movie night",
+          "📷 DSLR camera for trip",
+          "🧳 75L Travel rucksack / suitcase",
+          "⛺ 4-Person camping tent",
+        ],
+        buy: [
+          "📚 College textbooks & notes",
+          "🪑 Ergonomic study chair",
+          "🍳 Induction cooker / kettle",
+          "🏸 Badminton racquets pair",
+        ],
+        service: [
+          "⚡ Trusted electrician for AC wiring",
+          "🚿 Plumber for tap leak fix",
+          "💻 Laptop technician for hardware check",
+          "📦 Luggage moving helper",
+        ],
+      }[selectedType]
+    : [
+        "🔨 Cordless drill for home fixes",
+        "🪜 6ft Step ladder for lights",
+        "📽️ Home projector for weekend",
+        "⚡ Trusted local electrician",
+      ];
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8 space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--color-neutral-900)]">
-            Community Needs
-          </h1>
-          <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
-            See what neighbors are looking for, or ask for something you need.
-          </p>
-        </div>
-
-        {/* Action Button */}
-        <Button asChild variant="primary" size="sm" className="shrink-0">
-          <Link
-            href={
-              activeCommunity
-                ? `/needs/create?community=${activeCommunity.id}`
-                : "/needs/create"
-            }
-            className="flex items-center gap-1.5"
-          >
-            <Plus className="h-4 w-4" />
-            Post a Need
-          </Link>
-        </Button>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--color-neutral-900)]">
+          {isMyNeedsView ? "My Requests" : "Community Needs"}
+        </h1>
+        <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
+          {isMyNeedsView
+            ? "Track the items and help you've requested across your communities."
+            : "See what neighbors are looking for, or ask for something you need."}
+        </p>
       </div>
 
       {/* Community Selector & View Controls */}
@@ -152,33 +169,33 @@ export default async function NeedsFeedPage({
         </div>
 
         {/* View Toggle: Community Feed vs My Needs */}
-        <div className="flex items-center gap-1 rounded-lg bg-[var(--color-neutral-100)] p-1 shrink-0 self-start md:self-auto">
+        <div className="flex items-center gap-1 rounded-lg bg-[var(--color-neutral-100)] p-1 shrink-0 self-start md:self-auto border border-[var(--color-neutral-200)]">
           <Link
             href={`/needs?community=${activeCommunity?.id ?? ""}${
               typeParam ? `&type=${typeParam}` : ""
             }`}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
               !isMyNeedsView
                 ? "bg-white text-[var(--color-neutral-900)] shadow-xs"
                 : "text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]"
             }`}
           >
             <Inbox className="h-3.5 w-3.5" />
-            Community Feed
+            <span>Community Feed</span>
           </Link>
 
           <Link
             href={`/needs?view=my-needs${
               activeCommunity ? `&community=${activeCommunity.id}` : ""
             }`}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-semibold transition-all ${
               isMyNeedsView
-                ? "bg-white text-[var(--color-neutral-900)] shadow-xs"
+                ? "bg-white text-[var(--color-primary-700)] shadow-xs border border-[var(--color-primary-200)]"
                 : "text-[var(--color-neutral-600)] hover:text-[var(--color-neutral-900)]"
             }`}
           >
             <User className="h-3.5 w-3.5" />
-            My Requests
+            <span>My Requests</span>
           </Link>
         </div>
       </div>
@@ -227,6 +244,10 @@ export default async function NeedsFeedPage({
           <h2 className="text-lg font-bold text-[var(--color-neutral-900)]">
             {isMyNeedsView
               ? "You haven't posted any needs yet"
+              : selectedType
+              ? `No active "${NEED_TYPE_CONFIG[selectedType].label}" requests in ${
+                  activeCommunity?.name ?? "this community"
+                } yet`
               : `No active needs in ${
                   activeCommunity?.name ?? "this community"
                 } yet`}
@@ -234,45 +255,43 @@ export default async function NeedsFeedPage({
           <p className="mx-auto mt-1.5 max-w-md text-sm text-[var(--color-neutral-600)] leading-relaxed">
             {isMyNeedsView
               ? "When you need a tool, appliance, or local service, post a request and neighbors will get notified."
+              : selectedType
+              ? `Nobody has posted a ${NEED_TYPE_CONFIG[selectedType].label.toLowerCase()} request yet. Be the first to ask, or browse all categories.`
               : "Kickstart the community! Ask to borrow an item, find local recommendations, or hire trusted help."}
           </p>
 
           {/* Quick Idea Pills (Psychological prompts) */}
           <div className="mt-6 flex flex-wrap justify-center gap-2 max-w-lg mx-auto">
-            {[
-              "🔨 Cordless drill for home fixes",
-              "🪜 6ft Step ladder for lights",
-              "📽️ Home projector for weekend",
-              "⚡ Trusted local electrician",
-            ].map((idea) => (
-              <Link
-                key={idea}
-                href={
-                  activeCommunity
-                    ? `/needs/create?community=${activeCommunity.id}`
-                    : "/needs/create"
-                }
-                className="rounded-full border border-[var(--color-neutral-200)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--color-neutral-700)] transition-all hover:border-[var(--color-primary-300)] hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-800)]"
-              >
-                {idea}
-              </Link>
-            ))}
+            {activeCategoryIdeas.map((idea) => {
+              // Strip leading emoji (e.g. "📷 DSLR camera for trip" -> "DSLR camera for trip")
+              const cleanTitle = idea.replace(/^[^\w\s]+/, "").trim();
+              const targetType = selectedType || "borrow";
+              const href = activeCommunity
+                ? `/needs/create?community=${activeCommunity.id}&type=${targetType}&title=${encodeURIComponent(cleanTitle)}`
+                : `/needs/create?type=${targetType}&title=${encodeURIComponent(cleanTitle)}`;
+
+              return (
+                <Link
+                  key={idea}
+                  href={href}
+                  className="rounded-full border border-[var(--color-neutral-200)] bg-white px-3 py-1.5 text-xs font-medium text-[var(--color-neutral-700)] transition-all hover:border-[var(--color-primary-300)] hover:bg-[var(--color-primary-50)] hover:text-[var(--color-primary-800)] shadow-2xs"
+                >
+                  {idea}
+                </Link>
+              );
+            })}
           </div>
 
-          <div className="mt-7 flex justify-center">
-            <Button asChild variant="primary" size="lg" className="gap-2 shadow-sm font-semibold">
+          {selectedType && (
+            <div className="mt-4">
               <Link
-                href={
-                  activeCommunity
-                    ? `/needs/create?community=${activeCommunity.id}`
-                    : "/needs/create"
-                }
+                href={`/needs?community=${activeCommunity?.id ?? ""}`}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-primary-600)] hover:underline"
               >
-                <Plus className="h-4 w-4" />
-                Post a Need Now
+                ← Clear filter & view all needs
               </Link>
-            </Button>
-          </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

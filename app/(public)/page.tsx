@@ -16,8 +16,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { StatusDot } from "@/components/shared/status-dot";
 import { HeroInteractiveDemo } from "@/components/marketing/hero-interactive-demo";
+import { getSessionUser } from "@/lib/auth/dal";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const user = await getSessionUser();
+
   return (
     <div className="flex flex-col">
       {/* ──────────────────────────────────────────────────────────────────────────
@@ -45,24 +48,31 @@ export default function LandingPage() {
                 Ask your community for what you need. Borrow a ladder, rent a projector, buy pre-loved items, or find trusted local help from people you already live with.
               </p>
 
-                            {/* Primary Call to Actions */}
+              {/* Primary Call to Actions */}
               <div className="mt-8 flex flex-col gap-3.5 sm:flex-row sm:items-center">
-                {/* 🌟 BUTTON 1: Instant Signup Door */}
-                <Link href="/signup">
-                  <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base shadow-sm shadow-[var(--color-primary-500)]/25">
-                    <Sparkles className="h-5 w-5" />
-                    Join Jod Community
-                  </Button>
-                </Link>
+                {user ? (
+                  <Link href="/needs">
+                    <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base shadow-sm shadow-[var(--color-primary-500)]/25">
+                      <Sparkles className="h-5 w-5" />
+                      Open Community Feed
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/signup">
+                    <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base shadow-sm shadow-[var(--color-primary-500)]/25">
+                      <Sparkles className="h-5 w-5" />
+                      Join Jod Community
+                    </Button>
+                  </Link>
+                )}
 
-                                {/* 🌟 100% Working Smooth Scroll (Bina kisi error ke) */}
+                {/* 🌟 100% Working Smooth Scroll */}
                 <a href="#how-it-works">
                   <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto text-base">
                     See how it works
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </a>
-
               </div>
 
 
@@ -446,17 +456,35 @@ export default function LandingPage() {
               Create a private marketplace for your apartment society, hostel, or neighborhood in under two minutes. Zero clutter, verified trust, and instant fulfillment.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3.5 sm:flex-row">
-              <Link href="/join-community">
-                <Button size="lg" className="w-full sm:w-auto bg-white text-[var(--color-primary-700)] hover:bg-[var(--color-neutral-100)] shadow-md font-semibold">
-                  <Sparkles className="h-5 w-5 text-[var(--color-primary-600)]" />
-                  Create or Join a Community
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/40 text-white bg-transparent hover:bg-white/10">
-                  Sign In to Existing Account
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link href="/needs">
+                    <Button size="lg" className="w-full sm:w-auto bg-white text-[var(--color-primary-700)] hover:bg-[var(--color-neutral-100)] shadow-md font-semibold">
+                      <Sparkles className="h-5 w-5 text-[var(--color-primary-600)]" />
+                      Go to Needs Feed
+                    </Button>
+                  </Link>
+                  <Link href="/profile">
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/40 text-white bg-transparent hover:bg-white/10">
+                      View My Profile
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/join-community">
+                    <Button size="lg" className="w-full sm:w-auto bg-white text-[var(--color-primary-700)] hover:bg-[var(--color-neutral-100)] shadow-md font-semibold">
+                      <Sparkles className="h-5 w-5 text-[var(--color-primary-600)]" />
+                      Create or Join a Community
+                    </Button>
+                  </Link>
+                  <Link href="/login">
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/40 text-white bg-transparent hover:bg-white/10">
+                      Sign In to Existing Account
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

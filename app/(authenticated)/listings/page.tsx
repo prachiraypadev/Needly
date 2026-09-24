@@ -111,10 +111,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-neutral-900)]">
-            Community Supply & Offerings
+            Available Items & Services
           </h1>
           <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
-            Borrow, rent, or buy items and services offered by neighbors in your community.
+            Borrow, rent, or buy items and services shared by neighbors in your community.
           </p>
         </div>
 
@@ -128,7 +128,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             className="flex items-center gap-1.5"
           >
             <Plus className="h-4 w-4" />
-            Offer an Item or Service
+            Share an Item or Service
           </Link>
         </Button>
       </div>

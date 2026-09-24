@@ -2,9 +2,10 @@ import Link from "next/link";
 import { getSessionUser } from "@/lib/auth/dal";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/actions/auth";
-import { Avatar } from "@/components/ui/avatar";
-import { LogOut, Link2 } from "lucide-react";
+import { Link2 } from "lucide-react";
 import { NavLinks } from "@/components/layout/nav-links";
+import { QuickCreateMenu } from "@/components/layout/quick-create-menu";
+import { UserNavMenu } from "@/components/layout/user-nav-menu";
 
 /**
  * AppHeader — Authenticated Application Header
@@ -50,39 +51,17 @@ export async function AppHeader() {
 
         {/* User controls */}
         <div className="flex items-center gap-3">
-          {/* Quick Post Need Button */}
-          <Link
-            href="/needs/create"
-            className="flex items-center gap-1.5 rounded-lg bg-[var(--color-primary-600)] px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[var(--color-primary-700)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)]"
-          >
-            <span>+</span> Post Need
-          </Link>
+          {/* Unified Create Menu (Ask for a Need OR Offer an Item) */}
+          <QuickCreateMenu />
 
-          {/* User Profile Avatar & Name (Compact & Friendly) */}
+          {/* User Account Menu (Profile, Requests, Shared Items, Logout) */}
           {user && (
-            <Link
-              href="/profile"
-              className="flex items-center gap-2 rounded-lg py-1 px-1.5 transition-colors hover:bg-[var(--color-neutral-100)]"
-              title={`View Profile (${displayName})`}
-            >
-              <Avatar name={displayName} size="sm" />
-              <span className="hidden text-xs font-bold text-[var(--color-neutral-800)] sm:block max-w-[120px] truncate">
-                {displayName.split(" ")[0]}
-              </span>
-            </Link>
+            <UserNavMenu
+              displayName={displayName}
+              email={user.email}
+              signOutAction={signOut}
+            />
           )}
-
-          {/* Logout via server action form — works without JS */}
-          <form action={signOut}>
-            <button
-              type="submit"
-              aria-label="Sign out"
-              className="flex items-center gap-1.5 rounded-lg border border-[var(--color-neutral-200)] bg-white px-3 py-2 text-xs font-medium text-[var(--color-neutral-600)] transition-colors hover:border-[var(--color-neutral-300)] hover:bg-[var(--color-neutral-50)] hover:text-[var(--color-neutral-900)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)]"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Sign out</span>
-            </button>
-          </form>
         </div>
       </div>
     </header>

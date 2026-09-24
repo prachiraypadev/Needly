@@ -64,8 +64,11 @@ export async function createListing(
 
   const validated = CreateListingSchema.safeParse(raw);
   if (!validated.success) {
+    const fieldErrors = validated.error.flatten().fieldErrors;
+    const firstErrorMessage = Object.values(fieldErrors).flat()[0];
     return {
-      errors: validated.error.flatten().fieldErrors,
+      errors: fieldErrors,
+      message: firstErrorMessage || "Please check your inputs and try again.",
     };
   }
 
@@ -122,8 +125,9 @@ export async function createListing(
     .single<{ id: string }>();
 
   if (insertError || !newListing) {
+    console.error("Listing insert error:", insertError);
     return {
-      message: "Failed to publish listing. Please check your inputs and try again.",
+      message: insertError?.message || "Failed to publish listing. Please check your inputs and try again.",
     };
   }
 
