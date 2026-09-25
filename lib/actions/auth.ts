@@ -170,7 +170,7 @@ export async function signOut(): Promise<void> {
  * Server Action for Google OAuth authentication.
  * Initiates the OAuth 2.0 PKCE flow via Supabase and redirects the user to Google.
  */
-export async function signInWithGoogle(): Promise<{ error?: string }> {
+export async function signInWithGoogle(): Promise<{ error?: string; url?: string }> {
   const supabase = await createClient();
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -189,14 +189,36 @@ export async function signInWithGoogle(): Promise<{ error?: string }> {
     console.error("[Auth] Google OAuth error:", error);
     return {
       error: error.message.toLowerCase().includes("not enabled")
-        ? "Google login is not enabled in Supabase yet. Please enable the Google provider in your Supabase Dashboard (Authentication > Providers > Google)."
+        ? "Google login is not enabled in your Supabase project yet. Please enable Google provider in your Supabase Dashboard (Authentication > Providers > Google)."
         : error.message,
     };
   }
 
   if (data?.url) {
-    redirect(data.url);
+    // Check if the provider is actually active in Supabase
+    try {
+      const probeRes = await fetch(data.url, { method: "GET", redirect: "manual" });
+      if (probeRes.status === 400) {
+        const errBody = (await probeRes.json().catch(() => null)) as {
+          msg?: string;
+          error_code?: string;
+        } | null;
+        if (
+          errBody?.msg?.toLowerCase().includes("not enabled") ||
+          errBody?.error_code === "validation_failed"
+        ) {
+          return {
+            error:
+              "Google Login is not enabled in your Supabase project yet. Please enable the Google provider in your Supabase Dashboard (Authentication → Providers → Google), or continue with Email & Password below.",
+          };
+        }
+      }
+    } catch {
+      // If probe fails for network reasons, proceed with the URL
+    }
+
+    return { url: data.url };
   }
 
-  return {};
+  return { error: "Failed to generate Google authentication link." };
 }

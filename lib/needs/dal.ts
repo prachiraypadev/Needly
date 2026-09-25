@@ -29,6 +29,36 @@ export type NeedFeedItem = {
   isOwner: boolean;
 };
 
+export type OfferDetailView = {
+  id: string;
+  needId: string;
+  providerId: string;
+  providerName: string;
+  providerAvatar: string | null;
+  message: string | null;
+  priceAmount: number | null;
+  availableFrom: string | null;
+  availableUntil: string | null;
+  status: "pending" | "accepted" | "rejected" | "withdrawn" | "expired";
+  createdAt: string;
+  isMyOffer: boolean;
+};
+
+export type TransactionDetailView = {
+  id: string;
+  status: "requested" | "accepted" | "confirmed" | "scheduled" | "in_progress" | "completed" | "cancelled" | "disputed";
+  agreedAmount: number | null;
+  currency: string;
+  providerId: string;
+  providerName: string;
+  providerAvatar: string | null;
+  requesterId: string;
+  requesterName: string;
+  requesterAvatar: string | null;
+  createdAt: string;
+  completedAt: string | null;
+};
+
 export type NeedDetailView = {
   need: NeedRow;
   community: {
@@ -50,6 +80,9 @@ export type NeedDetailView = {
   }>;
   isOwner: boolean;
   canManage: boolean;
+  offers: OfferDetailView[];
+  myOffer: OfferDetailView | null;
+  activeTransaction: TransactionDetailView | null;
 };
 
 /**
@@ -382,6 +415,133 @@ export const getNeedDetail = cache(
     const canManage =
       isOwner || membership.role === "admin" || membership.role === "owner";
 
+    // 4. Fetch Offers (if manager/owner -> all offers; if neighbor -> their own offer)
+    let rawOffers: any[] = [];
+    if (canManage) {
+      const { data } = await supabase
+        .from("offers")
+        .select(`
+          id,
+          need_id,
+          listing_id,
+          provider_id,
+          community_id,
+          message,
+          price_amount,
+          available_from,
+          available_until,
+          status,
+          expires_at,
+          created_at,
+          updated_at,
+          profiles (
+            id,
+            display_name,
+            avatar_url
+          )
+        `)
+        .eq("need_id", needId)
+        .order("created_at", { ascending: false });
+      rawOffers = data || [];
+    } else {
+      const { data } = await supabase
+        .from("offers")
+        .select(`
+          id,
+          need_id,
+          listing_id,
+          provider_id,
+          community_id,
+          message,
+          price_amount,
+          available_from,
+          available_until,
+          status,
+          expires_at,
+          created_at,
+          updated_at,
+          profiles (
+            id,
+            display_name,
+            avatar_url
+          )
+        `)
+        .eq("need_id", needId)
+        .eq("provider_id", userId)
+        .order("created_at", { ascending: false });
+      rawOffers = data || [];
+    }
+
+    const offers: OfferDetailView[] = rawOffers.map((o) => {
+      const prof = o.profiles as unknown as {
+        id: string;
+        display_name: string;
+        avatar_url: string | null;
+      } | null;
+      return {
+        id: o.id,
+        needId: o.need_id,
+        providerId: o.provider_id,
+        providerName: prof?.display_name ?? "Neighbor",
+        providerAvatar: prof?.avatar_url ?? null,
+        message: o.message,
+        priceAmount: o.price_amount != null ? Number(o.price_amount) : null,
+        availableFrom: o.available_from,
+        availableUntil: o.available_until,
+        status: o.status,
+        createdAt: o.created_at,
+        isMyOffer: o.provider_id === userId,
+      };
+    });
+
+    const myOffer = offers.find((o) => o.providerId === userId) || null;
+
+    // 5. Fetch Active Transaction (if need is in_progress or fulfilled)
+    let activeTransaction: TransactionDetailView | null = null;
+    if (need.status === "in_progress" || need.status === "fulfilled") {
+      const { data: tx } = await supabase
+        .from("transactions")
+        .select(`
+          id,
+          status,
+          agreed_amount,
+          currency,
+          provider_id,
+          requester_id,
+          created_at,
+          completed_at
+        `)
+        .eq("need_id", needId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (tx) {
+        const { data: participants } = await supabase
+          .from("profiles")
+          .select("id, display_name, avatar_url")
+          .in("id", [tx.requester_id, tx.provider_id]);
+
+        const reqP = participants?.find((p) => p.id === tx.requester_id);
+        const provP = participants?.find((p) => p.id === tx.provider_id);
+
+        activeTransaction = {
+          id: tx.id,
+          status: tx.status as any,
+          agreedAmount: tx.agreed_amount != null ? Number(tx.agreed_amount) : null,
+          currency: tx.currency ?? "INR",
+          providerId: tx.provider_id,
+          providerName: provP?.display_name ?? "Neighbor",
+          providerAvatar: provP?.avatar_url ?? null,
+          requesterId: tx.requester_id,
+          requesterName: reqP?.display_name ?? "Requester",
+          requesterAvatar: reqP?.avatar_url ?? null,
+          createdAt: tx.created_at,
+          completedAt: tx.completed_at,
+        };
+      }
+    }
+
     return {
       need: need as unknown as NeedRow,
       community: {
@@ -403,6 +563,9 @@ export const getNeedDetail = cache(
       })),
       isOwner,
       canManage,
+      offers,
+      myOffer,
+      activeTransaction,
     };
   }
 );

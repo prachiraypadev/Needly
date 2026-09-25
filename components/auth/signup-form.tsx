@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState, useActionState } from "react";
 import { signUp } from "@/lib/actions/auth";
 import type { AuthFormState } from "@/lib/validations/auth";
 import Link from "next/link";
-import { AlertCircle, Loader2, Mail, Lock, User, CheckCircle2, Inbox } from "lucide-react";
+import { AlertCircle, Loader2, Mail, Lock, User, CheckCircle2, Inbox, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PASSWORD_REQUIREMENTS = [
@@ -15,6 +15,8 @@ const PASSWORD_REQUIREMENTS = [
 ];
 
 export function SignupForm() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [state, action, pending] = useActionState<AuthFormState, FormData>(
     signUp,
     undefined
@@ -146,14 +148,26 @@ export function SignupForm() {
           <input
             id="signup-password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             required
             aria-describedby="signup-password-requirements"
             aria-invalid={!!state?.errors?.password}
             placeholder="••••••••"
-            className="w-full rounded-lg border border-[var(--color-neutral-300)] bg-white py-2.5 pl-10 pr-3.5 text-sm text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/20 disabled:opacity-60 aria-invalid:border-[hsl(0,70%,55%)]"
+            className="w-full rounded-lg border border-[var(--color-neutral-300)] bg-white py-2.5 pl-10 pr-10 text-sm text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/20 disabled:opacity-60 aria-invalid:border-[hsl(0,70%,55%)]"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-700)] focus:outline-none cursor-pointer"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
         </div>
 
         {/* Password requirements */}
@@ -205,7 +219,7 @@ export function SignupForm() {
           <input
             id="signup-confirm-password"
             name="confirm_password"
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             autoComplete="new-password"
             required
             aria-describedby={
@@ -215,8 +229,20 @@ export function SignupForm() {
             }
             aria-invalid={!!state?.errors?.confirm_password}
             placeholder="••••••••"
-            className="w-full rounded-lg border border-[var(--color-neutral-300)] bg-white py-2.5 pl-10 pr-3.5 text-sm text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/20 disabled:opacity-60 aria-invalid:border-[hsl(0,70%,55%)]"
+            className="w-full rounded-lg border border-[var(--color-neutral-300)] bg-white py-2.5 pl-10 pr-10 text-sm text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/20 disabled:opacity-60 aria-invalid:border-[hsl(0,70%,55%)]"
           />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-neutral-400)] hover:text-[var(--color-neutral-700)] focus:outline-none cursor-pointer"
+            aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
         </div>
         {state?.errors?.confirm_password && (
           <p

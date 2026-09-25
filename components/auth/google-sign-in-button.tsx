@@ -27,20 +27,18 @@ export function GoogleSignInButton({
       if (res?.error) {
         setErrorMessage(res.error);
         setLoading(false);
+        return;
       }
-    } catch (err: unknown) {
-      // In Next.js Server Actions, redirect() throws a NEXT_REDIRECT error which is intended behavior!
-      const isRedirect =
-        typeof err === "object" &&
-        err !== null &&
-        "message" in err &&
-        (err as { message: string }).message === "NEXT_REDIRECT";
 
-      if (!isRedirect) {
-        console.error("Google sign in failed:", err);
-        setErrorMessage("Could not connect to Google. Please try again.");
+      if (res?.url) {
+        window.location.href = res.url;
+      } else {
         setLoading(false);
       }
+    } catch (err: unknown) {
+      console.error("Google sign in failed:", err);
+      setErrorMessage("Could not connect to Google. Please try again or use email sign in.");
+      setLoading(false);
     }
   };
 

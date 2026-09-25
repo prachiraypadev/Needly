@@ -247,26 +247,48 @@ export default async function ListingDetailPage({
             />
           )}
 
-          {/* Reserved Neighbor Action Area (Phase 7 Request/Offer) */}
+          {/* Neighbor Action Area: Request this item / service */}
           {!isOwner && listing.status === "active" && (
-            <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-6 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="rounded-2xl border border-[var(--color-primary-200)] bg-gradient-to-br from-white to-[var(--color-primary-50)]/40 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h3 className="text-sm font-bold text-[var(--color-neutral-900)]">
-                  Interested in this offering?
+                  Interested in this {listing.listing_type}?
                 </h3>
-                <p className="text-xs text-[var(--color-neutral-500)] mt-0.5">
-                  Request to borrow, rent, or buy this item from {owner.displayName}.
+                <p className="text-xs text-[var(--color-neutral-600)] mt-0.5">
+                  Request to{" "}
+                  {listing.transaction_type === "lend"
+                    ? "borrow"
+                    : listing.transaction_type === "rent"
+                    ? "rent"
+                    : listing.transaction_type === "sell"
+                    ? "buy"
+                    : "book"}{" "}
+                  this from {owner.displayName}.
                 </p>
               </div>
 
               <Button
-                disabled
+                asChild
                 variant="primary"
                 size="sm"
-                className="shrink-0 cursor-not-allowed"
+                className="shrink-0 shadow-xs cursor-pointer hover:shadow-md transition-all active:scale-95"
               >
-                <ShoppingBag className="mr-1.5 h-4 w-4" />
-                Request Item (Coming in Phase 7)
+                <Link
+                  href={`/needs/create?community=${community.id}&title=${encodeURIComponent(
+                    `Need: ${listing.title}`
+                  )}&type=${
+                    listing.transaction_type === "lend"
+                      ? "borrow"
+                      : listing.transaction_type === "rent"
+                      ? "rent"
+                      : listing.transaction_type === "sell"
+                      ? "buy"
+                      : "service"
+                  }`}
+                >
+                  <ShoppingBag className="mr-1.5 h-4 w-4" />
+                  Request This Item
+                </Link>
               </Button>
             </div>
           )}

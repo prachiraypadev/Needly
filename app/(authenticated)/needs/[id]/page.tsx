@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { verifySession } from "@/lib/auth/dal";
 import { getNeedDetail } from "@/lib/needs/dal";
 import { NeedActions } from "@/components/needs/need-actions";
+import { NeedOffersSection } from "@/components/needs/need-offers-section";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -70,7 +71,17 @@ export default async function NeedDetailPage({ params }: NeedDetailPageProps) {
     );
   }
 
-  const { need, community, requester, category, isOwner, canManage } = detail;
+  const {
+    need,
+    community,
+    requester,
+    category,
+    isOwner,
+    canManage,
+    offers,
+    myOffer,
+    activeTransaction,
+  } = detail;
   const typeConfig = NEED_TYPE_CONFIG[need.need_type as NeedType];
 
   const getStatusBadge = (status: string) => {
@@ -267,24 +278,21 @@ export default async function NeedDetailPage({ params }: NeedDetailPageProps) {
             />
           )}
 
-          {/* Neighbor Response Placeholder for Phase 6 Offers */}
-          {!isOwner && need.status === "open" && (
-            <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-6 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h3 className="text-sm font-bold text-[var(--color-neutral-900)]">
-                  Can you help {requester.displayName}?
-                </h3>
-                <p className="text-xs text-[var(--color-neutral-500)] mt-0.5">
-                  Have this item or willing to provide this service? Make an offer to your neighbor.
-                </p>
-              </div>
-
-              <Button disabled variant="primary" size="sm" className="shrink-0 cursor-not-allowed">
-                <MessageSquare className="mr-1.5 h-4 w-4" />
-                Make an Offer (Coming in Phase 6)
-              </Button>
-            </div>
-          )}
+          {/* Offers & Handshake / Transaction Section */}
+          <NeedOffersSection
+            needId={need.id}
+            needTitle={need.title}
+            needStatus={need.status}
+            needType={need.need_type}
+            budgetMax={need.budget_max != null ? Number(need.budget_max) : null}
+            requesterName={requester.displayName}
+            isOwner={isOwner}
+            canManage={canManage}
+            offers={offers}
+            myOffer={myOffer}
+            activeTransaction={activeTransaction}
+            currentUserId={userId}
+          />
         </div>
 
         {/* Sidebar: Requester & Community Info */}

@@ -8,6 +8,7 @@ import {
 } from "@/lib/needs/dal";
 import { NeedCard } from "@/components/needs/need-card";
 import { CommunitySwitcher } from "@/components/community/community-switcher";
+import { Button } from "@/components/ui/button";
 import {
   NEED_TYPES,
   NEED_TYPE_CONFIG,
