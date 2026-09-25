@@ -11,8 +11,8 @@ import Link from "next/link";
 import { Plus, Package, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "My Offerings — Needly",
-  description: "Manage your shared items and services across your communities.",
+  title: "My Shared Items — Jod",
+  description: "Manage the items and services you have shared across your communities.",
 };
 
 interface MyListingsPageProps {
@@ -44,11 +44,11 @@ export default async function MyListingsPage({
               className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-neutral-500)] hover:text-[var(--color-neutral-900)] transition-colors"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              Back to Community Supply
+              Back to Available Items
             </Link>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-neutral-900)]">
-            My Offerings & Shared Items
+            My Shared Items
           </h1>
           <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
             Manage the items you are lending, renting, or selling, and update your services.

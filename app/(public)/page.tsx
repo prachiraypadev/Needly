@@ -15,8 +15,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { StatusDot } from "@/components/shared/status-dot";
+import { HeroInteractiveDemo } from "@/components/marketing/hero-interactive-demo";
+import { getSessionUser } from "@/lib/auth/dal";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const user = await getSessionUser();
+
   return (
     <div className="flex flex-col">
       {/* ──────────────────────────────────────────────────────────────────────────
@@ -46,19 +50,31 @@ export default function LandingPage() {
 
               {/* Primary Call to Actions */}
               <div className="mt-8 flex flex-col gap-3.5 sm:flex-row sm:items-center">
-                <Link href="/join-community">
-                  <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base">
-                    <Sparkles className="h-5 w-5" />
-                    Join your community
-                  </Button>
-                </Link>
-                <Link href="#how-it-works">
+                {user ? (
+                  <Link href="/needs">
+                    <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base shadow-sm shadow-[var(--color-primary-500)]/25">
+                      <Sparkles className="h-5 w-5" />
+                      Open Community Feed
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/signup">
+                    <Button size="lg" variant="primary" className="w-full gap-2 sm:w-auto text-base shadow-sm shadow-[var(--color-primary-500)]/25">
+                      <Sparkles className="h-5 w-5" />
+                      Join Jod Community
+                    </Button>
+                  </Link>
+                )}
+
+                {/* 🌟 100% Working Smooth Scroll */}
+                <a href="#how-it-works">
                   <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto text-base">
                     See how it works
                     <ArrowRight className="h-4 w-4" />
                   </Button>
-                </Link>
+                </a>
               </div>
+
 
               {/* Social Proof Checklist */}
               <div className="mt-10 grid grid-cols-2 gap-4 border-t border-[var(--color-neutral-200)] pt-6 sm:grid-cols-3">
@@ -77,90 +93,9 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Column: Visual Product Simulation */}
+            {/* Right Column: Visual Product Simulation (Interactive Live Demo) */}
             <div className="relative lg:col-span-5">
-              <div className="relative mx-auto max-w-md rounded-2xl border border-[var(--color-neutral-200)] bg-white p-5 shadow-lg">
-                {/* Visual Header */}
-                <div className="flex items-center justify-between border-b border-[var(--color-neutral-100)] pb-3.5">
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-3 w-3 rounded-full bg-[var(--color-primary-500)]" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-neutral-700)]">
-                      Palm Meadows Residency
-                    </span>
-                  </div>
-                  <span className="rounded-md bg-[var(--color-neutral-100)] px-2 py-0.5 text-[11px] font-medium text-[var(--color-neutral-600)]">
-                    Active Community
-                  </span>
-                </div>
-
-                {/* Example Active Need Card */}
-                <div className="mt-4 rounded-xl border border-[var(--color-primary-200)] bg-[var(--color-primary-50)] p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      <Avatar name="Rahul Sharma" size="sm" />
-                      <div>
-                        <p className="text-xs font-semibold text-[var(--color-neutral-900)]">Rahul S. (Block B-402)</p>
-                        <p className="text-[11px] text-[var(--color-neutral-500)]">Requested 12 mins ago</p>
-                      </div>
-                    </div>
-                    <Badge variant="borrow">Borrow</Badge>
-                  </div>
-                  <p className="mt-2.5 text-sm font-medium text-[var(--color-neutral-900)]">
-                    Need a cordless power drill for hanging picture frames tomorrow morning.
-                  </p>
-                  <div className="mt-3 flex items-center justify-between text-xs text-[var(--color-primary-800)] font-medium">
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" /> Needed: Tomorrow, 9 AM – 1 PM
-                    </span>
-                    <span className="font-semibold text-[var(--color-primary-600)]">
-                      2 offers received
-                    </span>
-                  </div>
-                </div>
-
-                {/* Matching Offer Simulation */}
-                <div className="mt-3.5 space-y-2.5">
-                  <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-3.5 shadow-2xs">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Avatar name="Priya Patel" size="sm" />
-                        <div>
-                          <p className="text-xs font-medium text-[var(--color-neutral-900)]">Priya P. (Block C-101)</p>
-                          <p className="text-[11px] text-[var(--color-neutral-500)]">Bosch 18V Hammer Drill available</p>
-                        </div>
-                      </div>
-                      <span className="rounded-md bg-[var(--color-success-light)] px-2 py-0.5 text-xs font-bold text-[var(--color-success)]">
-                        Free to lend
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-3.5 shadow-2xs">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Avatar name="Amit Verma" size="sm" />
-                        <div>
-                          <p className="text-xs font-medium text-[var(--color-neutral-900)]">Amit V. (Block A-204)</p>
-                          <p className="text-[11px] text-[var(--color-neutral-500)]">Cordless drill + 20 drill bits set</p>
-                        </div>
-                      </div>
-                      <span className="rounded-md bg-[var(--color-success-light)] px-2 py-0.5 text-xs font-bold text-[var(--color-success)]">
-                        Free to lend
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Simulation CTA */}
-                <div className="mt-4 pt-3 border-t border-[var(--color-neutral-100)] flex items-center justify-between">
-                  <span className="text-xs text-[var(--color-neutral-500)]">1-Click Acceptance</span>
-                  <div className="flex gap-1.5">
-                    <span className="inline-flex items-center gap-1 rounded-md bg-[var(--color-primary-500)] px-2.5 py-1 text-xs font-semibold text-white">
-                      Accept Offer
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <HeroInteractiveDemo />
             </div>
           </div>
         </div>
@@ -173,13 +108,13 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto">
             <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary-600)]">
-              The Needly Workflow
+              The Jod Workflow
             </span>
             <h2 className="mt-2 text-3xl font-extrabold text-[var(--color-neutral-900)] sm:text-4xl">
               From unstructured request to fulfilled need
             </h2>
             <p className="mt-3.5 text-base text-[var(--color-neutral-600)]">
-              Instead of messages buried in 500-member group chats, Needly organizes your community’s intent into a structured, trackable loop.
+              Instead of messages buried in 500-member group chats, Jod organizes your community’s intent into a structured, trackable loop.
             </p>
           </div>
 
@@ -253,7 +188,7 @@ export default function LandingPage() {
               One platform for every community requirement
             </h2>
             <p className="mt-3.5 text-base text-[var(--color-neutral-600)]">
-              Whether you need to borrow an item for two hours or book a carpenter for the afternoon, Needly handles the specific workflow.
+              Whether you need to borrow an item for two hours or book a carpenter for the afternoon, Jod handles the specific workflow.
             </p>
           </div>
 
@@ -347,7 +282,7 @@ export default function LandingPage() {
                 Real community is the strongest trust model
               </h2>
               <p className="mt-4 text-base text-[var(--color-neutral-600)] leading-relaxed">
-                Anonymous open marketplaces struggle with fraud, stolen deposits, and unreliable strangers. Needly is designed strictly within **private, verified boundaries** where reputation is real.
+                Anonymous open marketplaces struggle with fraud, stolen deposits, and unreliable strangers. Jod is designed strictly within **private, verified boundaries** where reputation is real.
               </p>
 
               <div className="mt-8 space-y-4">
@@ -437,7 +372,7 @@ export default function LandingPage() {
               Real needs fulfilled every single day
             </h2>
             <p className="mt-3.5 text-base text-[var(--color-neutral-600)]">
-              Here is how real community members structure their needs on Needly.
+              Here is how real community members structure their needs on Jod.
             </p>
           </div>
 
@@ -515,23 +450,41 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-white">
-              Ready to bring Needly to your community?
+              Ready to bring Jod to your community?
             </h2>
             <p className="mt-4 text-base sm:text-lg text-[var(--color-primary-100)] leading-relaxed">
               Create a private marketplace for your apartment society, hostel, or neighborhood in under two minutes. Zero clutter, verified trust, and instant fulfillment.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3.5 sm:flex-row">
-              <Link href="/join-community">
-                <Button size="lg" className="w-full sm:w-auto bg-white text-[var(--color-primary-700)] hover:bg-[var(--color-neutral-100)] shadow-md font-semibold">
-                  <Sparkles className="h-5 w-5 text-[var(--color-primary-600)]" />
-                  Create or Join a Community
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/40 text-white bg-transparent hover:bg-white/10">
-                  Sign In to Existing Account
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link href="/needs">
+                    <Button size="lg" className="w-full sm:w-auto bg-white text-[var(--color-primary-700)] hover:bg-[var(--color-neutral-100)] shadow-md font-semibold">
+                      <Sparkles className="h-5 w-5 text-[var(--color-primary-600)]" />
+                      Go to Needs Feed
+                    </Button>
+                  </Link>
+                  <Link href="/profile">
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/40 text-white bg-transparent hover:bg-white/10">
+                      View My Profile
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/join-community">
+                    <Button size="lg" className="w-full sm:w-auto bg-white text-[var(--color-primary-700)] hover:bg-[var(--color-neutral-100)] shadow-md font-semibold">
+                      <Sparkles className="h-5 w-5 text-[var(--color-primary-600)]" />
+                      Create or Join a Community
+                    </Button>
+                  </Link>
+                  <Link href="/login">
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/40 text-white bg-transparent hover:bg-white/10">
+                      Sign In to Existing Account
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

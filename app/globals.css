@@ -2,17 +2,18 @@
 
 @layer theme {
   :root {
-    /* Brand Primary (Needly Green — calm, trustworthy, local) */
-    --color-primary-50: hsl(152, 60%, 97%);
-    --color-primary-100: hsl(152, 55%, 93%);
-    --color-primary-200: hsl(152, 50%, 85%);
-    --color-primary-300: hsl(152, 48%, 72%);
-    --color-primary-400: hsl(152, 46%, 56%);
-    --color-primary-500: hsl(152, 50%, 40%);
-    --color-primary-600: hsl(152, 52%, 33%);
-    --color-primary-700: hsl(152, 54%, 26%);
-    --color-primary-800: hsl(152, 56%, 20%);
-    --color-primary-900: hsl(152, 58%, 14%);
+        /* Brand Primary (Vibrant Emerald — Fresh, Tech & Community) */
+    --color-primary-50: hsl(162, 75%, 97%);
+    --color-primary-100: hsl(162, 70%, 92%);
+    --color-primary-200: hsl(162, 65%, 83%);
+    --color-primary-300: hsl(162, 60%, 70%);
+    --color-primary-400: hsl(162, 65%, 52%);
+    --color-primary-500: hsl(162, 76%, 39%);
+    --color-primary-600: hsl(162, 80%, 31%);
+    --color-primary-700: hsl(162, 82%, 24%);
+    --color-primary-800: hsl(162, 84%, 18%);
+    --color-primary-900: hsl(162, 86%, 12%);
+
 
     /* Warm Neutrals (HSL 30 base — friendly, approachable) */
     --color-neutral-0: hsl(0, 0%, 100%);

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Needly — Community Needs Marketplace",
+  title: "Jod — Community Needs Marketplace",
   description:
     "A trusted community-based marketplace for needs, resources, rentals, purchases, and services. Say what you need, and let your community fulfill it.",
   keywords: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "local services",
     "apartment society",
   ],
-  authors: [{ name: "Needly Team" }],
+  authors: [{ name: "Jod Team" }],
 };
 
 export const viewport: Viewport = {

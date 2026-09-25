@@ -7,7 +7,6 @@ import {
   TRANSACTION_TYPE_CONFIG,
   ITEM_CONDITIONS,
   ITEM_CONDITION_LABELS,
-  DAYS_OF_WEEK,
   type ListingType,
   type TransactionType,
   type PriceUnit,
@@ -23,7 +22,6 @@ import {
   ArrowLeft,
   Sparkles,
   CheckCircle2,
-  Calendar,
   IndianRupee,
   Layers,
   Building2,
@@ -68,18 +66,13 @@ export function CreateListingWizard({
   const [condition, setCondition] = useState<ItemCondition>("good");
   const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
+  const [durationLimit, setDurationLimit] = useState("");
 
   // Media URLs
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [inputUrl, setInputUrl] = useState("");
 
-  // Recurring Availability Slots
-  const [availabilitySlots, setAvailabilitySlots] = useState<
-    Array<{ day_of_week: number; time_from: string; time_to: string }>
-  >([]);
-  const [selectedDay, setSelectedDay] = useState(1);
-  const [timeFrom, setTimeFrom] = useState("09:00");
-  const [timeTo, setTimeTo] = useState("18:00");
+
 
   const [state, action, pending] = useActionState<
     CreateListingFormState,
@@ -114,20 +107,7 @@ export function CreateListingWizard({
     setMediaUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleAddSlot = () => {
-    if (timeFrom < timeTo) {
-      if (!availabilitySlots.some((s) => s.day_of_week === selectedDay)) {
-        setAvailabilitySlots((prev) => [
-          ...prev,
-          { day_of_week: selectedDay, time_from: timeFrom, time_to: timeTo },
-        ]);
-      }
-    }
-  };
 
-  const handleRemoveSlot = (day: number) => {
-    setAvailabilitySlots((prev) => prev.filter((s) => s.day_of_week !== day));
-  };
 
   const canAdvanceStep1 = title.trim().length >= 3 && !!communityId;
   const canAdvanceStep2 =
@@ -149,7 +129,7 @@ export function CreateListingWizard({
           <span className="text-sm font-semibold text-[var(--color-neutral-900)]">
             {step === 1 && "What are you offering?"}
             {step === 2 && "Transaction & Pricing"}
-            {step === 3 && "Details & Availability"}
+            {step === 3 && "Details & Notes"}
             {step === 4 && "Review & Publish"}
           </span>
         </div>
@@ -182,7 +162,7 @@ export function CreateListingWizard({
               <button
                 type="button"
                 onClick={() => handleSelectListingType("item")}
-                className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
                   listingType === "item"
                     ? "border-[var(--color-primary-600)] bg-[var(--color-primary-50)]/40 shadow-xs"
                     : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)]"
@@ -193,10 +173,10 @@ export function CreateListingWizard({
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-[var(--color-neutral-900)]">
-                    Item / Physical Good
+                    Item / Goods
                   </h4>
                   <p className="text-xs text-[var(--color-neutral-500)] mt-0.5">
-                    Lend, rent, or sell tools, ladder, books, projector, chairs, etc.
+                    Tools, appliances, books, gadgets
                   </p>
                 </div>
               </button>
@@ -204,7 +184,7 @@ export function CreateListingWizard({
               <button
                 type="button"
                 onClick={() => handleSelectListingType("service")}
-                className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
                   listingType === "service"
                     ? "border-[var(--color-primary-600)] bg-[var(--color-primary-50)]/40 shadow-xs"
                     : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)]"
@@ -218,7 +198,7 @@ export function CreateListingWizard({
                     Service / Skill
                   </h4>
                   <p className="text-xs text-[var(--color-neutral-500)] mt-0.5">
-                    Offer help, electric repair, plumbing, carpentry, tutoring, or tasks.
+                    Repairs, tutoring, tasks, help
                   </p>
                 </div>
               </button>
@@ -322,14 +302,14 @@ export function CreateListingWizard({
                           setPriceUnit("per_day");
                         }
                       }}
-                      className={`p-3.5 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                      className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
                         isSelected
                           ? "border-[var(--color-primary-600)] bg-[var(--color-primary-50)]/40 shadow-xs"
                           : "border-[var(--color-neutral-200)] bg-white hover:border-[var(--color-neutral-300)]"
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <Badge variant={cfg.badgeVariant} className="text-xs">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <Badge variant={cfg.badgeVariant} className="text-xs font-bold">
                           {cfg.shortLabel}
                         </Badge>
                         {isSelected && (
@@ -337,15 +317,52 @@ export function CreateListingWizard({
                         )}
                       </div>
                       <h4 className="text-xs font-bold text-[var(--color-neutral-900)]">
-                        {cfg.label}
+                        {tType === "lend" && "Free Sharing"}
+                        {tType === "rent" && "Paid Rental"}
+                        {tType === "sell" && "Direct Sale"}
                       </h4>
-                      <p className="text-[11px] text-[var(--color-neutral-500)] mt-1">
-                        {cfg.description}
+                      <p className="text-[11px] text-[var(--color-neutral-500)] mt-0.5">
+                        {tType === "lend" && "Neighbors return after use"}
+                        {tType === "rent" && "Hourly or daily rate"}
+                        {tType === "sell" && "One-time purchase"}
                       </p>
                     </button>
                   );
                 })}
               </div>
+
+              {/* Duration Box for Lend / Rent */}
+              {(transactionType === "lend" || transactionType === "rent") && (
+                <div className="mt-3 rounded-xl border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)]/70 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-[var(--color-neutral-800)] flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5 text-[var(--color-primary-600)]" />
+                      Max Sharing Duration
+                    </label>
+                    <span className="text-[11px] text-[var(--color-neutral-400)] font-normal">Optional</span>
+                  </div>
+                  <div className="flex items-center gap-2 pt-0.5">
+                    {[
+                      "Few Hours",
+                      "1 Day",
+                      "Flexible",
+                    ].map((dur) => (
+                      <button
+                        key={dur}
+                        type="button"
+                        onClick={() => setDurationLimit((prev) => (prev === dur ? "" : dur))}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                          durationLimit === dur
+                            ? "bg-[var(--color-primary-600)] text-white shadow-2xs font-semibold scale-102"
+                            : "bg-white border border-[var(--color-neutral-200)] text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)]"
+                        }`}
+                      >
+                        {dur}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="rounded-lg bg-[var(--color-primary-50)]/40 border border-[var(--color-primary-200)] p-3 text-xs text-[var(--color-primary-800)] flex items-center gap-2">
@@ -528,7 +545,7 @@ export function CreateListingWizard({
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the item condition, usage notes, model, or your service background…"
+              placeholder="Describe item condition, room/flat number, preferred pickup timing, or any instructions…"
               className="w-full rounded-lg border border-[var(--color-neutral-300)] bg-white py-2.5 px-3.5 text-sm text-[var(--color-neutral-900)] placeholder:text-[var(--color-neutral-400)] focus:border-[var(--color-primary-500)] focus:outline-none resize-none"
             />
           </div>
@@ -580,80 +597,12 @@ export function CreateListingWizard({
             )}
           </div>
 
-          {/* Recurring Weekly Availability */}
-          <div className="rounded-lg border border-[var(--color-neutral-200)] bg-[var(--color-neutral-50)] p-4 space-y-3">
-            <div className="flex items-center gap-1.5 text-sm font-semibold text-[var(--color-neutral-900)]">
-              <Clock className="h-4 w-4 text-[var(--color-primary-600)]" />
-              <span>Weekly Availability Schedule (Optional)</span>
-            </div>
-            <p className="text-xs text-[var(--color-neutral-500)]">
-              Specify days and hours when you are available for pickups or service appointments.
+          {/* Helpful pickup / meetup tip */}
+          <div className="rounded-lg bg-[var(--color-neutral-50)] border border-[var(--color-neutral-200)] px-3.5 py-3 flex items-start gap-2.5 text-xs text-[var(--color-neutral-600)]">
+            <Sparkles className="h-4 w-4 text-[var(--color-primary-600)] shrink-0 mt-0.5" />
+            <p>
+              <strong className="text-[var(--color-neutral-800)]">Tip:</strong> Mention your room or flat number and when you&apos;re usually available in the description above so neighbors can connect smoothly.
             </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <select
-                value={selectedDay}
-                onChange={(e) => setSelectedDay(parseInt(e.target.value))}
-                aria-label="Day of week"
-                className="rounded-md border border-[var(--color-neutral-300)] bg-white py-1.5 px-2.5 text-xs text-[var(--color-neutral-800)]"
-              >
-                {DAYS_OF_WEEK.map((d) => (
-                  <option key={d.value} value={d.value}>
-                    {d.label}
-                  </option>
-                ))}
-              </select>
-
-              <input
-                type="time"
-                value={timeFrom}
-                onChange={(e) => setTimeFrom(e.target.value)}
-                aria-label="Start time"
-                className="rounded-md border border-[var(--color-neutral-300)] bg-white py-1 px-2 text-xs text-[var(--color-neutral-800)]"
-              />
-              <span className="text-xs text-[var(--color-neutral-400)]">to</span>
-              <input
-                type="time"
-                value={timeTo}
-                onChange={(e) => setTimeTo(e.target.value)}
-                aria-label="End time"
-                className="rounded-md border border-[var(--color-neutral-300)] bg-white py-1 px-2 text-xs text-[var(--color-neutral-800)]"
-              />
-
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddSlot}
-                className="text-xs h-7 px-2.5"
-              >
-                Add Slot
-              </Button>
-            </div>
-
-            {availabilitySlots.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-2">
-                {availabilitySlots.map((slot) => {
-                  const dayLabel = DAYS_OF_WEEK.find((d) => d.value === slot.day_of_week)?.short;
-                  return (
-                    <span
-                      key={slot.day_of_week}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[var(--color-neutral-200)] px-2.5 py-1 text-xs text-[var(--color-neutral-700)] shadow-2xs"
-                    >
-                      <strong>{dayLabel}:</strong> {slot.time_from} – {slot.time_to}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSlot(slot.day_of_week)}
-                        aria-label={`Remove ${dayLabel} availability`}
-                        className="text-[var(--color-neutral-400)] hover:text-red-600"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  );
-                })}
-              </div>
-            )}
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-[var(--color-neutral-100)]">
@@ -686,14 +635,22 @@ export function CreateListingWizard({
           <input type="hidden" name="transaction_type" value={transactionType} />
           <input type="hidden" name="community_id" value={communityId} />
           <input type="hidden" name="title" value={title} />
-          <input type="hidden" name="description" value={description} />
+          <input
+            type="hidden"
+            name="description"
+            value={
+              durationLimit
+                ? `${description ? `${description}\n\n` : ""}⏱️ Available duration: ${durationLimit}`
+                : description
+            }
+          />
           <input type="hidden" name="category_id" value={categoryId} />
           <input type="hidden" name="price_amount" value={priceAmount} />
           <input type="hidden" name="price_unit" value={priceUnit} />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="condition" value={listingType === "item" ? condition : ""} />
           <input type="hidden" name="media_urls" value={JSON.stringify(mediaUrls)} />
-          <input type="hidden" name="availability_slots" value={JSON.stringify(availabilitySlots)} />
+          <input type="hidden" name="availability_slots" value="[]" />
 
           {/* Live Preview Card */}
           <div className="rounded-xl border-2 border-[var(--color-primary-300)] bg-[var(--color-primary-50)]/30 p-5 space-y-4">
@@ -702,7 +659,7 @@ export function CreateListingWizard({
                 <Sparkles className="h-3.5 w-3.5" />
                 Preview of your Offering
               </span>
-              <Badge variant={TRANSACTION_TYPE_CONFIG[transactionType].badgeVariant} className="text-xs">
+              <Badge variant={TRANSACTION_TYPE_CONFIG[transactionType].badgeVariant} className="text-xs font-bold">
                 {TRANSACTION_TYPE_CONFIG[transactionType].label}
               </Badge>
             </div>
@@ -742,6 +699,15 @@ export function CreateListingWizard({
                 </div>
               )}
 
+              {durationLimit && (
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5 text-[var(--color-primary-600)]" />
+                  <span>
+                    Duration limit: <strong>{durationLimit}</strong>
+                  </span>
+                </div>
+              )}
+
               {listingType === "item" && (
                 <div className="flex items-center gap-2">
                   <Layers className="h-3.5 w-3.5 text-[var(--color-neutral-500)]" />
@@ -751,14 +717,7 @@ export function CreateListingWizard({
                 </div>
               )}
 
-              {availabilitySlots.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-3.5 w-3.5 text-[var(--color-neutral-500)]" />
-                  <span>
-                    Availability: <strong>{availabilitySlots.length} weekly slots configured</strong>
-                  </span>
-                </div>
-              )}
+
 
               {selectedCategoryName && (
                 <div className="flex items-center gap-2">
@@ -770,6 +729,17 @@ export function CreateListingWizard({
               )}
             </div>
           </div>
+
+          {state?.message && (
+            <div
+              role="alert"
+              aria-live="polite"
+              className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
+              <span>{state.message}</span>
+            </div>
+          )}
 
           <div className="flex items-center justify-between pt-4 border-t border-[var(--color-neutral-100)]">
             <Button

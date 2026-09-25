@@ -1,11 +1,13 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateProfile } from "@/lib/actions/profile";
 import type { ProfileFormState } from "@/lib/validations/auth";
 import type { Database } from "@/lib/types/database.types";
-import { Loader2, Save, User, Phone, FileText } from "lucide-react";
+import { Loader2, Save, User, Phone, FileText, CheckCircle2, Users, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -20,30 +22,66 @@ interface ProfileEditFormProps {
  * Shows Sonner toasts on success/failure.
  */
 export function ProfileEditForm({ profile }: ProfileEditFormProps) {
+  const router = useRouter();
   const [state, action, pending] = useActionState<ProfileFormState, FormData>(
     updateProfile,
     undefined
   );
 
-  // Show toasts when action state changes
+  // Show toasts when action state changes & refresh page data
   useEffect(() => {
     if (state?.success) {
       toast.success("Profile updated successfully.");
+      router.refresh(); // Automatically fetches latest server data from database
     } else if (state?.message) {
       toast.error(state.message);
     }
-  }, [state]);
+  }, [state, router]);
 
   return (
-    <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-6 shadow-xs">
-      <h3 className="text-base font-semibold text-[var(--color-neutral-900)]">
-        Edit Profile
-      </h3>
-      <p className="mt-0.5 text-sm text-[var(--color-neutral-500)]">
-        Update your display name, bio, and phone number.
-      </p>
+    <div className="space-y-6">
+      {/* 🌟 NEXT STEP SUCCESS BANNER */}
+      {state?.success && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50/90 p-5 text-emerald-950 shadow-xs animate-in fade-in duration-300">
+          <div className="flex items-start gap-3.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white shrink-0 mt-0.5">
+              <CheckCircle2 className="h-5 w-5" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-sm font-bold text-emerald-900">
+                Profile Updated! Next: Connect with Your Community
+              </h4>
+              <p className="mt-1 text-xs text-emerald-800 leading-relaxed">
+                Your profile is now set up. To start borrowing tools, sharing resources, or posting needs, head over to your community dashboard.
+              </p>
+              <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
+                <Button asChild variant="primary" size="sm" className="gap-1.5 font-bold shadow-xs">
+                  <Link href="/communities">
+                    <Users className="h-3.5 w-3.5" />
+                    Go to Communities
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="sm" className="gap-1.5 bg-white border-emerald-300 text-emerald-900 hover:bg-emerald-100">
+                  <Link href="/needs">
+                    <ShoppingBag className="h-3.5 w-3.5" />
+                    View Needs Feed
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <form action={action} className="mt-5 space-y-5" noValidate>
+      <div className="rounded-xl border border-[var(--color-neutral-200)] bg-white p-6 shadow-xs">
+        <h3 className="text-base font-semibold text-[var(--color-neutral-900)]">
+          Edit Profile
+        </h3>
+        <p className="mt-0.5 text-sm text-[var(--color-neutral-500)]">
+          Update your display name, bio, and phone number.
+        </p>
+
+        <form action={action} className="mt-5 space-y-5" noValidate>
         {/* Display name */}
         <div>
           <label
@@ -187,5 +225,6 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
         </div>
       </form>
     </div>
+  </div>
   );
 }

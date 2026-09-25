@@ -8,8 +8,8 @@ import { ArrowLeft, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Offer an Item or Service — Needly",
-  description: "Share, rent, or sell items and offer local services within your verified community on Needly.",
+  title: "Offer an Item or Service — Jod",
+  description: "Share, rent, or sell items and offer local services within your verified community on Jod.",
 };
 
 interface CreateListingPageProps {
@@ -39,7 +39,7 @@ export default async function CreateListingPage({
           Join a Community First
         </h1>
         <p className="mt-2 text-sm text-[var(--color-neutral-600)] max-w-md mx-auto">
-          Needly is community-first. You must be an active member of an apartment, hostel, or neighborhood community before offering items or services.
+          Jod is community-first. You must be an active member of an apartment, hostel, or neighborhood community before offering items or services.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Button asChild variant="outline">

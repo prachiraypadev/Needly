@@ -42,8 +42,11 @@ export async function createNeed(
 
   const validated = CreateNeedSchema.safeParse(raw);
   if (!validated.success) {
+    const fieldErrors = validated.error.flatten().fieldErrors;
+    const firstErrorMessage = Object.values(fieldErrors).flat()[0];
     return {
-      errors: validated.error.flatten().fieldErrors,
+      errors: fieldErrors,
+      message: firstErrorMessage || "Please check your inputs and try again.",
     };
   }
 

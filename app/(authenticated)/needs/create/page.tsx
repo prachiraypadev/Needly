@@ -8,13 +8,17 @@ import { ArrowLeft, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Post a Need — Needly",
+  title: "Post a Need — Jod",
   description: "Ask your neighbors to borrow, rent, buy, or help with tasks in your community.",
 };
+
+import type { NeedType } from "@/lib/validations/need";
 
 interface CreateNeedPageProps {
   searchParams: Promise<{
     community?: string;
+    type?: string;
+    title?: string;
   }>;
 }
 
@@ -22,7 +26,11 @@ export default async function CreateNeedPage({
   searchParams,
 }: CreateNeedPageProps) {
   const { userId } = await verifySession();
-  const { community: communityParam } = await searchParams;
+  const {
+    community: communityParam,
+    type: typeParam,
+    title: titleParam,
+  } = await searchParams;
 
   const [userCommunities, categories] = await Promise.all([
     getUserCommunities(userId),
@@ -39,7 +47,7 @@ export default async function CreateNeedPage({
           Join a Community First
         </h1>
         <p className="mt-2 text-sm text-[var(--color-neutral-600)] max-w-md mx-auto">
-          Needly is community-first. You must be a member of a local apartment, hostel, or neighborhood community before posting a need.
+          Jod is community-first. You must be a member of a local apartment, hostel, or neighborhood community before posting a need.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Button asChild variant="outline">
@@ -90,6 +98,8 @@ export default async function CreateNeedPage({
             slug: cat.slug,
           }))}
           initialCommunityId={communityParam}
+          initialType={typeParam as NeedType | undefined}
+          initialTitle={titleParam}
         />
       </div>
     </div>

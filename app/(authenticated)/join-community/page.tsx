@@ -4,8 +4,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Join a Community — Needly",
-  description: "Enter an invite code to join your local neighborhood, hostel, or workplace community on Needly.",
+  title: "Join a Community — Jod",
+  description: "Enter an invite code to join your local neighborhood, hostel, or workplace community on Jod.",
 };
 
 interface JoinCommunityPageProps {

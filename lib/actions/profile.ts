@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { verifySession } from "@/lib/auth/dal";
 import { UpdateProfileSchema, ProfileFormState } from "@/lib/validations/auth";
@@ -59,6 +60,9 @@ export async function updateProfile(
       message: "Failed to save profile. Please try again.",
     };
   }
+
+  // 4. Invalidate Next.js cache so the page immediately re-renders with fresh data
+  revalidatePath("/profile");
 
   return { success: true };
 }

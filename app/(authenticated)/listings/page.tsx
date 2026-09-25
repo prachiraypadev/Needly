@@ -7,6 +7,7 @@ import {
 } from "@/lib/db/listings";
 import { resolveActiveCommunity } from "@/lib/needs/dal";
 import { ListingCard } from "@/components/listings/listing-card";
+import { CommunitySwitcher } from "@/components/community/community-switcher";
 import { Button } from "@/components/ui/button";
 import {
   ITEM_TRANSACTION_TYPES,
@@ -27,7 +28,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Available in Your Community — Needly",
+  title: "Available in Your Community — Jod",
   description: "Browse tools, appliances, items, and services shared by neighbors in your community.",
 };
 
@@ -67,7 +68,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
           Join a Community to See Offerings
         </h1>
         <p className="mt-2 text-sm text-[var(--color-neutral-600)] max-w-md mx-auto">
-          Needly connects you to verified neighbors in your apartment, society, or college. Join a community with an invite code or start your own to see shared items.
+          Jod connects you to verified neighbors in your apartment, society, or college. Join a community with an invite code or start your own to see shared items.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Button asChild variant="outline">
@@ -110,10 +111,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-neutral-900)]">
-            Community Supply & Offerings
+            Available Items & Services
           </h1>
           <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
-            Borrow, rent, or buy items and services offered by neighbors in your community.
+            Borrow, rent, or buy items and services shared by neighbors in your community.
           </p>
         </div>
 
@@ -127,7 +128,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             className="flex items-center gap-1.5"
           >
             <Plus className="h-4 w-4" />
-            Offer an Item or Service
+            Share an Item or Service
           </Link>
         </Button>
       </div>
@@ -146,23 +147,11 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             </span>
 
             <div className="flex items-center gap-2">
-              <form action="/listings" method="GET" className="inline">
-                {typeParam && <input type="hidden" name="type" value={typeParam} />}
-                {modeParam && <input type="hidden" name="mode" value={modeParam} />}
-                <select
-                  name="community"
-                  defaultValue={activeCommunity?.id}
-                  onChange={(e) => e.target.form?.submit()}
-                  aria-label="Select active community"
-                  className="rounded-md border border-[var(--color-neutral-300)] bg-white py-1 px-2.5 text-sm font-semibold text-[var(--color-neutral-900)] focus:border-[var(--color-primary-500)] focus:outline-none"
-                >
-                  {userCommunities.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </form>
+              <CommunitySwitcher
+                communities={userCommunities}
+                activeCommunityId={activeCommunity?.id}
+                basePath="/listings"
+              />
 
               {activeCommunity && (
                 <Link

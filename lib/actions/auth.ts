@@ -161,3 +161,42 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+// ---------------------------------------------------------------------------
+// GOOGLE OAUTH
+// ---------------------------------------------------------------------------
+
+/**
+ * Server Action for Google OAuth authentication.
+ * Initiates the OAuth 2.0 PKCE flow via Supabase and redirects the user to Google.
+ */
+export async function signInWithGoogle(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${appUrl}/auth/callback`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
+    },
+  });
+
+  if (error) {
+    console.error("[Auth] Google OAuth error:", error);
+    return {
+      error: error.message.toLowerCase().includes("not enabled")
+        ? "Google login is not enabled in Supabase yet. Please enable the Google provider in your Supabase Dashboard (Authentication > Providers > Google)."
+        : error.message,
+    };
+  }
+
+  if (data?.url) {
+    redirect(data.url);
+  }
+
+  return {};
+}

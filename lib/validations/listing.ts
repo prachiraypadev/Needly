@@ -179,7 +179,7 @@ export const CreateListingSchema = z
     community_id: z.string().uuid({ message: "Please select a valid community." }),
     category_id: z
       .string()
-      .uuid({ message: "Invalid category." })
+      .trim()
       .optional()
       .or(z.literal("")),
     price_amount: z.coerce
@@ -268,7 +268,7 @@ export const UpdateListingSchema = z
       .or(z.literal("")),
     category_id: z
       .string()
-      .uuid({ message: "Invalid category." })
+      .trim()
       .optional()
       .or(z.literal("")),
     price_amount: z.coerce.number().min(0).optional().nullable(),

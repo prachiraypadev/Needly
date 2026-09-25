@@ -360,3 +360,91 @@ export async function createInvite(
     inviteToken: token,
   };
 }
+
+// ---------------------------------------------------------------------------
+// DELETE / ARCHIVE COMMUNITY
+// ---------------------------------------------------------------------------
+
+/**
+ * Archives (soft deletes) a community.
+ * Requires caller to be an 'owner' or 'admin' of the community.
+ */
+export async function deleteCommunity(
+  communityId: string
+): Promise<{ success?: boolean; message?: string }> {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+
+  // Verify caller is owner or admin of this community
+  const { data: membership, error: memberError } = await supabase
+    .from("community_members")
+    .select("role")
+    .eq("community_id", communityId)
+    .eq("user_id", userId)
+    .single();
+
+  if (memberError || !membership || !["owner", "admin"].includes(membership.role)) {
+    return {
+      message: "Only a community owner or admin has permission to delete this community.",
+    };
+  }
+
+  // Soft delete / archive the community
+  const { error: archiveError } = await supabase
+    .from("communities")
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", communityId);
+
+  if (archiveError) {
+    return {
+      message: "Failed to delete community: " + archiveError.message,
+    };
+  }
+
+  // Remove caller's membership record so it disassociates immediately
+  await supabase
+    .from("community_members")
+    .delete()
+    .eq("community_id", communityId)
+    .eq("user_id", userId);
+
+  revalidatePath("/communities");
+  revalidatePath("/profile");
+  revalidatePath("/needs");
+  revalidatePath("/listings");
+
+  return { success: true };
+}
+
+// ---------------------------------------------------------------------------
+// LEAVE COMMUNITY
+// ---------------------------------------------------------------------------
+
+/**
+ * Removes the authenticated user from a community.
+ */
+export async function leaveCommunity(
+  communityId: string
+): Promise<{ success?: boolean; message?: string }> {
+  const { userId } = await verifySession();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("community_members")
+    .delete()
+    .eq("community_id", communityId)
+    .eq("user_id", userId);
+
+  if (error) {
+    return {
+      message: "Failed to leave community: " + error.message,
+    };
+  }
+
+  revalidatePath("/communities");
+  revalidatePath("/profile");
+  revalidatePath("/needs");
+  revalidatePath("/listings");
+
+  return { success: true };
+}
