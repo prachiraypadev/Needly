@@ -274,8 +274,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
         </div>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {listings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
+          {listings.map((listing, i) => (
+            <div key={listing.id} className="animate-rise [&>*]:h-full" style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}>
+              <ListingCard listing={listing} />
+            </div>
           ))}
         </div>
       )}

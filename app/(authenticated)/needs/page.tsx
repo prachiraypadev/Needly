@@ -7,6 +7,7 @@ import {
   getUserNeeds,
 } from "@/lib/needs/dal";
 import { NeedCard } from "@/components/needs/need-card";
+import { Button } from "@/components/ui/button";
 import { CommunitySwitcher } from "@/components/community/community-switcher";
 import { Button } from "@/components/ui/button";
 import {
@@ -296,8 +297,10 @@ export default async function NeedsFeedPage({
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {needs.map((need) => (
-            <NeedCard key={need.id} need={need} />
+          {needs.map((need, i) => (
+            <div key={need.id} className="animate-rise [&>*]:h-full" style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}>
+              <NeedCard need={need} />
+            </div>
           ))}
         </div>
       )}

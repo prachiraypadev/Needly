@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LoginForm } from "@/components/auth/login-form";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import Link from "next/link";
+import { AuthBackdrop } from "@/components/auth/auth-backdrop";
 
 export const metadata: Metadata = {
   title: "Log in — Jod",
@@ -10,9 +11,10 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center bg-[var(--color-neutral-50)] px-4 py-12">
+    <div className="relative flex min-h-[calc(100vh-8rem)] items-center justify-center overflow-hidden bg-[var(--color-neutral-50)] px-4 py-12">
+      <AuthBackdrop />
       {/* 🌟 JOD CARD BOX */}
-      <div className="w-full max-w-md rounded-2xl border border-[var(--color-neutral-200)] bg-white p-8 shadow-sm">
+      <div className="auth-card relative w-full max-w-md rounded-2xl border border-white/80 bg-white/85 p-8 shadow-xl shadow-[var(--color-neutral-900)]/5 backdrop-blur-xl">
         {/* Logo / Brand */}
         <div className="mb-6 text-center">
           <Link href="/" className="inline-flex flex-col items-center gap-1">

@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Link2, Menu, X, Sparkles, ShieldCheck, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,27 @@ export function Header({ user }: HeaderProps) {
   const pathname = usePathname();
   const isAuthPage = pathname === "/login" || pathname === "/signup";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  // Thin page-progress line along the bottom of the header
+  useEffect(() => {
+    if (isAuthPage) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressRef.current?.style.setProperty("transform", `scaleX(${max > 0 ? window.scrollY / max : 0})`);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [isAuthPage]);
 
   // Agar user Login ya Signup page par hai, toh marketing navbar mat dikhao!
   if (isAuthPage) {
@@ -24,14 +45,15 @@ export function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[var(--color-neutral-200)] bg-white/95 backdrop-blur-md transition-all">
+    <header className="site-header sticky top-0 z-40 w-full border-b border-[var(--color-neutral-200)]/70 bg-white/70 backdrop-blur-xl backdrop-saturate-150 transition-all">
+      <div ref={progressRef} className="site-header__progress" aria-hidden="true" />
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
         <Link
           href="/"
           className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary-400)] to-[var(--color-primary-600)] text-white shadow-sm shadow-[var(--color-primary-500)]/20">
+          <div className="brand-mark flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary-400)] to-[var(--color-primary-600)] text-white shadow-sm shadow-[var(--color-primary-500)]/20">
             <Link2 className="h-5 w-5" />
           </div>
 
@@ -49,30 +71,18 @@ export function Header({ user }: HeaderProps) {
         <nav className="hidden items-center gap-8 md:flex">
           <a
             href="#how-it-works"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
-            }}
             className="text-sm font-medium text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-neutral-900)]"
           >
             How It Works
           </a>
           <a
             href="#modalities"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById("modalities")?.scrollIntoView({ behavior: "smooth" });
-            }}
             className="text-sm font-medium text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-neutral-900)]"
           >
             Borrow, Rent & Services
           </a>
           <a
             href="#community-trust"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById("community-trust")?.scrollIntoView({ behavior: "smooth" });
-            }}
             className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-neutral-900)]"
           >
             <ShieldCheck className="h-4 w-4 text-[var(--color-primary-500)]" />
@@ -80,10 +90,6 @@ export function Header({ user }: HeaderProps) {
           </a>
           <a
             href="#examples"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById("examples")?.scrollIntoView({ behavior: "smooth" });
-            }}
             className="text-sm font-medium text-[var(--color-neutral-600)] transition-colors hover:text-[var(--color-neutral-900)]"
           >
             Real Examples
